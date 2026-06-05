@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 const GOOGLE_BOOKS_API_KEY = import.meta.env.VITE_GOOGLE_BOOKS_API_KEY;
 const AMAZON_TAG = import.meta.env.VITE_AMAZON_TAG;
 
@@ -208,32 +207,14 @@ export default function App() {
     setError("");
     setRecommendations([]);
     setExpandedRec(null);
-    const bookList = myBooks.map((b) => `"${b.title}" by ${b.author}`).join(", ");
-    const excludeList = notInterested.map((b) => `"${b.title}" by ${b.author}`).join(", ");
-    const excludeClause = excludeList ? ` Do NOT recommend any of these books (I'm not interested in them): ${excludeList}.` : "";
     try {
-      const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${GEMINI_API_KEY}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [
-              {
-                parts: [
-                  {
-                    text: `Based on these books I've read: ${bookList}.${excludeClause} Recommend 5 new books I'd enjoy. Respond ONLY in JSON array format like this, no other text: [{"title":"Book Title","author":"Author Name","reason":"One sentence why I'd like it","confidence":92,"genre":"Primary genre","themes":["theme1","theme2","theme3"],"details":"A 2-3 sentence deeper explanation of why this book matches the reader's taste, referencing what they've read and what they'll get from it."}]. The confidence field should be a number from 70-99 representing how confident you are this book matches the reader's taste. The themes array should contain 2-4 short theme/topic tags.`,
-                  },
-                ],
-              },
-            ],
-          }),
-        }
-      );
-      const data = await res.json();
-      let text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-      text = text.replace(/```json|```/g, "").trim();
-      const recs = JSON.parse(text);
+      const res = await fetch("/api/recommend", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ myBooks, notInterested }),
+      });
+      if (!res.ok) throw new Error("Request failed");
+      const { recommendations: recs } = await res.json();
 
       const recsWithCovers = await Promise.all(
         recs.map(async (r) => {
