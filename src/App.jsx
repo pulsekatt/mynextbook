@@ -228,31 +228,34 @@ export default function App() {
         }));
 
         // Merge: prioritize live results with covers, then cached, then live without covers.
+        // Dedupe on BOTH the source key AND a normalized title+author signature,
+        // so the same book appearing as multiple Google Books editions (or in both
+        // the cache and live results) only shows up once.
+        const norm = (s) => (s || "").trim().toLowerCase();
+        const sig = (b) => norm(b.title) + "|||" + norm(b.author);
         const seenKeys = new Set();
+        const seenSigs = new Set();
         const merged = [];
+        const tryAdd = (b) => {
+          if (seenKeys.has(b.key) || seenSigs.has(sig(b))) return;
+          merged.push(b);
+          seenKeys.add(b.key);
+          seenSigs.add(sig(b));
+        };
 
         // First: live results WITH covers
         for (const b of liveResults) {
-          if (b.cover && !seenKeys.has(b.key)) {
-            merged.push(b);
-            seenKeys.add(b.key);
-          }
+          if (b.cover) tryAdd(b);
         }
 
         // Second: cached results (already have enriched covers if available)
         for (const b of cached) {
-          if (!seenKeys.has(b.key)) {
-            merged.push(b);
-            seenKeys.add(b.key);
-          }
+          tryAdd(b);
         }
 
         // Third: live results WITHOUT covers (fallback)
         for (const b of liveResults) {
-          if (!b.cover && !seenKeys.has(b.key)) {
-            merged.push(b);
-            seenKeys.add(b.key);
-          }
+          if (!b.cover) tryAdd(b);
         }
 
         // If the API returned nothing usable, fall back to cached matches.
