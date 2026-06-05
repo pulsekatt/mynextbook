@@ -56,77 +56,75 @@ export default function App() {
   const [searching, setSearching] = useState(false);
   const debounceRef = useRef(null);
   const searchAbortRef = useRef(null);
+  const recommendAbortRef = useRef(null);
   const dropdownRef = useRef(null);
   const loadingRef = useRef(null);
   const progressRef = useRef(null);
   const progressStartRef = useRef(null);
 
   useEffect(() => {
-    // The curated POPULAR_BOOKS list is already seeded into cachedBooks, so
-    // instant local search works from second 0 with no network at all.
-    // This effect only *enriches* those entries with real cover thumbnails
-    // (fetched lazily from Google Books, cached in localStorage for 24h).
-    const enrichCovers = async () => {
-      // 1. Apply a fresh localStorage cover-map if we have one.
+    // POPULAR_BOOKS now ships with cover URLs baked in (see buildPopularBooks.mjs),
+    // so titles AND covers are available instantly on load with no network calls.
+    // The only thing this effect does is lazily backfill covers for the FEW books
+    // (if any) that had no cover at build time — most runs do nothing.
+    const missing = POPULAR_BOOKS.filter((b) => !b.cover);
+    if (missing.length === 0) return; // nothing to do — the common case
+
+    const backfill = async () => {
+      // Reuse a localStorage map so we don't re-fetch the same gaps every visit.
+      let stored = {};
       try {
         const raw = localStorage.getItem(CACHED_BOOKS_KEY);
         if (raw) {
           const parsed = JSON.parse(raw);
-          if (
-            parsed &&
-            parsed.covers &&
-            typeof parsed.timestamp === "number" &&
-            Date.now() - parsed.timestamp < CACHED_BOOKS_TTL_MS
-          ) {
-            setCachedBooks((prev) =>
-              prev.map((b) => (parsed.covers[b.key] ? { ...b, cover: parsed.covers[b.key] } : b))
-            );
-            return;
+          if (parsed?.covers && Date.now() - (parsed.timestamp || 0) < CACHED_BOOKS_TTL_MS) {
+            stored = parsed.covers;
           }
         }
       } catch {
-        // fall through and re-fetch
+        // ignore
       }
 
-      // 2. Fetch covers in small sequential batches so we don't hammer the API.
-      const covers = {};
-      const BATCH = 8;
-      for (let i = 0; i < POPULAR_BOOKS.length; i += BATCH) {
-        const slice = POPULAR_BOOKS.slice(i, i + BATCH);
-        await Promise.all(
-          slice.map(async (b) => {
-            try {
-              const res = await fetch(
-                `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
-                  b.title + " " + b.author
-                )}&maxResults=1&key=${GOOGLE_BOOKS_API_KEY}`
-              );
-              if (!res.ok) return;
-              const data = await res.json();
-              const img = data.items?.[0]?.volumeInfo?.imageLinks;
-              const cover = img?.smallThumbnail || img?.thumbnail || null;
-              if (cover) covers[b.key] = cover;
-            } catch {
-              // skip this cover; placeholder emoji will show
-            }
-          })
-        );
-        // Apply progressively so covers pop in as they arrive.
+      // Apply anything we already have cached.
+      if (Object.keys(stored).length > 0) {
         setCachedBooks((prev) =>
-          prev.map((bk) => (covers[bk.key] ? { ...bk, cover: covers[bk.key] } : bk))
+          prev.map((b) => (!b.cover && stored[b.key] ? { ...b, cover: stored[b.key] } : b))
         );
+      }
+
+      const stillMissing = missing.filter((b) => !stored[b.key]);
+      for (const b of stillMissing) {
+        try {
+          const res = await fetch(
+            `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
+              b.title + " " + b.author
+            )}&maxResults=1&key=${GOOGLE_BOOKS_API_KEY}`
+          );
+          if (!res.ok) continue;
+          const data = await res.json();
+          const img = data.items?.[0]?.volumeInfo?.imageLinks;
+          const cover = (img?.smallThumbnail || img?.thumbnail || null)?.replace(/^http:\/\//, "https://");
+          if (cover) {
+            stored[b.key] = cover;
+            setCachedBooks((prev) =>
+              prev.map((bk) => (bk.key === b.key ? { ...bk, cover } : bk))
+            );
+          }
+        } catch {
+          // skip; placeholder emoji shows
+        }
       }
 
       try {
         localStorage.setItem(
           CACHED_BOOKS_KEY,
-          JSON.stringify({ covers, timestamp: Date.now() })
+          JSON.stringify({ covers: stored, timestamp: Date.now() })
         );
       } catch {
-        // localStorage disabled/full — not critical, list still works without covers.
+        // ignore
       }
     };
-    enrichCovers();
+    backfill();
   }, []);
 
   useEffect(() => {
@@ -197,23 +195,21 @@ export default function App() {
       return;
     }
 
-    // 1. Instant local filter from cached list (these often have covers from enrichment).
+    // 1. Compute cached matches now (used in the merge for their covers),
+    // but DON'T render them yet — rendering here then re-rendering after the
+    // API responds causes a visible "jump". We set the dropdown only once.
     const cached = cachedBooks.filter(
       (b) =>
         b.title.toLowerCase().includes(query.toLowerCase()) ||
         b.author.toLowerCase().includes(query.toLowerCase())
     );
 
-    if (cached.length > 0) {
-      setDropdown(cached.slice(0, 15));
-      setDropdownOpen(true);
-      setSelectedIndex(-1);
-    }
-
-    // 2. Simultaneously fetch live results in background to enrich/update dropdown.
-    setSearching(true);
+    // 2. Fetch live results, then set the dropdown a single time with the merge.
     clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(async () => {
+      // Only flip the spinner on once the real fetch begins (after debounce),
+      // so it doesn't flash on/off with every keystroke while typing fast.
+      setSearching(true);
       const controller = new AbortController();
       searchAbortRef.current = controller;
       try {
@@ -259,12 +255,22 @@ export default function App() {
           }
         }
 
-        setDropdown(merged.slice(0, 15));
+        // If the API returned nothing usable, fall back to cached matches.
+        const finalList = merged.length > 0 ? merged : cached;
+        setDropdown(finalList.slice(0, 15));
         setDropdownOpen(true);
         setSelectedIndex(-1);
       } catch (err) {
         // AbortError is expected when user hits Stop — ignore it.
-        if (err.name !== "AbortError") console.error(err);
+        // On a real failure, show cached matches so the dropdown isn't empty.
+        if (err.name !== "AbortError") {
+          console.error(err);
+          if (cached.length > 0) {
+            setDropdown(cached.slice(0, 15));
+            setDropdownOpen(true);
+            setSelectedIndex(-1);
+          }
+        }
       } finally {
         searchAbortRef.current = null;
         setSearching(false);
@@ -273,7 +279,15 @@ export default function App() {
   }, [query, cachedBooks]);
 
   const addBook = (book) => {
-    if (!myBooks.find((b) => b.key === book.key)) setMyBooks([...myBooks, book]);
+    // Dedupe by key AND by title+author, since the same book can arrive with
+    // different keys (e.g. from the cached list vs a live Google Books result).
+    const norm = (s) => (s || "").trim().toLowerCase();
+    const isDup = myBooks.some(
+      (b) =>
+        b.key === book.key ||
+        (norm(b.title) === norm(book.title) && norm(b.author) === norm(book.author))
+    );
+    if (!isDup) setMyBooks([...myBooks, book]);
     setQuery("");
     setDropdown([]);
     setDropdownOpen(false);
@@ -342,11 +356,14 @@ export default function App() {
     setError("");
     setRecommendations([]);
     setExpandedRec(null);
+    const controller = new AbortController();
+    recommendAbortRef.current = controller;
     try {
       const res = await fetch("/api/recommend", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ myBooks, notInterested }),
+        signal: controller.signal,
       });
 
       // Errors come back as plain JSON with an "error" message.
@@ -370,7 +387,8 @@ export default function App() {
             const coverRes = await fetch(
               `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
                 r.title + " " + r.author
-              )}&maxResults=1&key=${GOOGLE_BOOKS_API_KEY}`
+              )}&maxResults=1&key=${GOOGLE_BOOKS_API_KEY}`,
+              { signal: controller.signal }
             );
             const coverData = await coverRes.json();
             const info = coverData.items?.[0]?.volumeInfo || {};
@@ -392,10 +410,21 @@ export default function App() {
         .sort((a, b) => (b.confidence || 0) - (a.confidence || 0));
       setRecommendations(sorted);
     } catch (err) {
-      setError("Failed to get recommendations. Try again.");
+      // AbortError = user pressed Stop; don't show an error in that case.
+      if (err.name !== "AbortError") {
+        setError("Failed to get recommendations. Try again.");
+      }
     } finally {
+      recommendAbortRef.current = null;
       setLoading(false);
     }
+  };
+
+  // Stop an in-flight recommendation request without clearing the book list.
+  const stopRecommend = () => {
+    if (recommendAbortRef.current) recommendAbortRef.current.abort();
+    recommendAbortRef.current = null;
+    setLoading(false);
   };
 
   const renderConfidence = (confidence) => {
@@ -549,9 +578,47 @@ export default function App() {
         @keyframes spin {
           to { transform: rotate(360deg); }
         }
+        @keyframes stopFadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes homeFadeIn {
+          from { opacity: 0; transform: translateY(-6px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
 
         /* ---- Mobile tweaks (phones) ---- */
         @media (max-width: 600px) {
+          /* 2 (this round). Home button: ease it off the very top-right corner. */
+          .home-button {
+            top: 14px !important;
+            right: 12px !important;
+            padding: 6px 12px !important;
+            font-size: 12px !important;
+          }
+
+          /* 3 (this round). Action buttons: Buy + More-info on row 1,
+             Already-read + Not-interested share row 2 side-by-side. */
+          .rec-actions {
+            gap: 8px !important;
+          }
+          .buy-btn,
+          .info-btn {
+            flex: 1 1 auto !important;
+            text-align: center !important;
+          }
+          .already-read-btn,
+          .not-interested-btn {
+            flex: 1 1 0 !important;
+            margin-left: 0 !important;
+            justify-content: center !important;
+            text-align: center !important;
+          }
+          .already-read-btn {
+            display: inline-flex !important;
+            align-items: center !important;
+          }
+
           /* 2. Smaller, shorter search bar + placeholder on mobile */
           .search-input {
             padding: 16px 14px !important;
@@ -634,6 +701,7 @@ export default function App() {
         {/* Home button — only shown once recommendations exist. */}
         {collapsed && (
           <button
+            className="home-button"
             onClick={goHome}
             onMouseEnter={() => setHoveredHome(true)}
             onMouseLeave={() => setHoveredHome(false)}
@@ -657,6 +725,7 @@ export default function App() {
               backdropFilter: "blur(4px)",
               transform: hoveredHome ? "scale(1.05)" : "scale(1)",
               transition: "transform 0.25s ease, background 0.25s ease",
+              animation: "homeFadeIn 0.5s ease-out both",
             }}
           >
             <span style={{ fontSize: 14 }}>🏠</span>
@@ -872,6 +941,7 @@ export default function App() {
                 fontWeight: 600,
                 cursor: "pointer",
                 transition: "all 0.2s ease",
+                animation: "stopFadeIn 0.18s ease-out",
               }}
             >
               <span
@@ -1092,7 +1162,8 @@ export default function App() {
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    clearAll();
+                    if (loading) stopRecommend();
+                    else clearAll();
                   }}
                   onMouseEnter={() => setHoveredClearAll(true)}
                   onMouseLeave={() => setHoveredClearAll(false)}
@@ -1100,10 +1171,14 @@ export default function App() {
                     display: "inline-flex",
                     alignItems: "center",
                     gap: 5,
-                    background: hoveredClearAll ? "#fef2f2" : "transparent",
-                    color: hoveredClearAll ? "#dc2626" : "#a78bfa",
+                    background: loading
+                      ? (hoveredClearAll ? "#dc2626" : "#fef2f2")
+                      : (hoveredClearAll ? "#fef2f2" : "transparent"),
+                    color: loading
+                      ? (hoveredClearAll ? "white" : "#dc2626")
+                      : (hoveredClearAll ? "#dc2626" : "#a78bfa"),
                     border: "1px solid",
-                    borderColor: hoveredClearAll ? "#fca5a5" : "#e2d9f3",
+                    borderColor: loading ? "#fca5a5" : (hoveredClearAll ? "#fca5a5" : "#e2d9f3"),
                     borderRadius: 99,
                     padding: "5px 12px",
                     fontSize: 12.5,
@@ -1112,7 +1187,7 @@ export default function App() {
                     transition: "all 0.2s ease",
                   }}
                 >
-                  🗑 Clear all
+                  {loading ? "⏹ Stop" : "🗑 Clear all"}
                 </button>
                 {collapsed && (
                   <span style={{ color: "#a78bfa", fontSize: 13, fontWeight: 600 }}>
@@ -1330,8 +1405,9 @@ export default function App() {
                     <div className="rec-details" style={{ color: "#555", fontSize: 16, lineHeight: 1.6 }}>{r.details}</div>
                   </div>
                 </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                <div className="rec-actions" style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
                   <a
+                    className="buy-btn"
                     href={amazonLink(r.title, r.author)}
                     target="_blank"
                     rel="noreferrer"
@@ -1357,6 +1433,7 @@ export default function App() {
                   </a>
                   {hasMoreInfo && (
                     <button
+                      className="info-btn"
                       onClick={(e) => {
                         e.stopPropagation();
                         setExpandedRec(expandedRec === i ? null : i);
@@ -1380,6 +1457,7 @@ export default function App() {
                     </button>
                   )}
                   <button
+                    className="already-read-btn"
                     onClick={(e) => {
                       e.stopPropagation();
                       markAsRead(i);
@@ -1404,6 +1482,7 @@ export default function App() {
                     ✓ Already read
                   </button>
                   <button
+                    className="not-interested-btn"
                     onClick={(e) => {
                       e.stopPropagation();
                       dismissRec(i);
