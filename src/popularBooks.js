@@ -31,18 +31,6 @@ const POPULAR_BOOKS = [
     "key": "pop-the-little-prince-antoine-de-saint-exup-ry"
   },
   {
-    "title": "Don Quixote",
-    "author": "Miguel de Cervantes",
-    "cover": null,
-    "key": "pop-don-quixote-miguel-de-cervantes"
-  },
-  {
-    "title": "The Count of Monte Cristo",
-    "author": "Alexandre Dumas",
-    "cover": null,
-    "key": "pop-the-count-of-monte-cristo-alexandre-dumas"
-  },
-  {
     "title": "The Three Musketeers",
     "author": "Alexandre Dumas",
     "cover": "https://books.google.com/books/content?id=MF4wEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
@@ -61,12 +49,6 @@ const POPULAR_BOOKS = [
     "key": "pop-sense-and-sensibility-jane-austen"
   },
   {
-    "title": "Emma",
-    "author": "Jane Austen",
-    "cover": null,
-    "key": "pop-emma-jane-austen"
-  },
-  {
     "title": "Jane Eyre",
     "author": "Charlotte Brontë",
     "cover": "https://books.google.com/books/content?id=AGxyadJ1RMMC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
@@ -83,12 +65,6 @@ const POPULAR_BOOKS = [
     "author": "Harper Lee",
     "cover": "https://books.google.com/books/content?id=DRagKAMw8AcC&printsec=frontcover&img=1&zoom=1&source=gbs_api",
     "key": "pop-to-kill-a-mockingbird-harper-lee"
-  },
-  {
-    "title": "The Great Gatsby",
-    "author": "F. Scott Fitzgerald",
-    "cover": null,
-    "key": "pop-the-great-gatsby-f-scott-fitzgerald"
   },
   {
     "title": "1984",
@@ -139,12 +115,6 @@ const POPULAR_BOOKS = [
     "key": "pop-east-of-eden-john-steinbeck"
   },
   {
-    "title": "Moby-Dick",
-    "author": "Herman Melville",
-    "cover": null,
-    "key": "pop-moby-dick-herman-melville"
-  },
-  {
     "title": "The Adventures of Huckleberry Finn",
     "author": "Mark Twain",
     "cover": "https://books.google.com/books/content?id=53CKzQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
@@ -155,12 +125,6 @@ const POPULAR_BOOKS = [
     "author": "Mark Twain",
     "cover": "https://books.google.com/books/content?id=t5yFTpIJYhcC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
     "key": "pop-the-adventures-of-tom-sawyer-mark-twain"
-  },
-  {
-    "title": "Crime and Punishment",
-    "author": "Fyodor Dostoevsky",
-    "cover": null,
-    "key": "pop-crime-and-punishment-fyodor-dostoevsky"
   },
   {
     "title": "The Brothers Karamazov",
@@ -245,12 +209,6 @@ const POPULAR_BOOKS = [
     "author": "Paulo Coelho",
     "cover": "https://books.google.com/books/content?id=FEL8DlqjYEkC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
     "key": "pop-the-alchemist-paulo-coelho"
-  },
-  {
-    "title": "Lord of the Flies",
-    "author": "William Golding",
-    "cover": null,
-    "key": "pop-lord-of-the-flies-william-golding"
   },
   {
     "title": "Catch-22",
@@ -361,12 +319,6 @@ const POPULAR_BOOKS = [
     "key": "pop-harry-potter-and-the-chamber-of-secrets-j-k-rowling"
   },
   {
-    "title": "Harry Potter and the Prisoner of Azkaban",
-    "author": "J.K. Rowling",
-    "cover": null,
-    "key": "pop-harry-potter-and-the-prisoner-of-azkaban-j-k-rowling"
-  },
-  {
     "title": "Harry Potter and the Goblet of Fire",
     "author": "J.K. Rowling",
     "cover": "https://books.google.com/books/content?id=etukl7GfrxQC&printsec=frontcover&img=1&zoom=1&source=gbs_api",
@@ -389,12 +341,6 @@ const POPULAR_BOOKS = [
     "author": "J.K. Rowling",
     "cover": "https://books.google.com/books/content?id=8rMBuwEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
     "key": "pop-harry-potter-and-the-deathly-hallows-j-k-rowling"
-  },
-  {
-    "title": "The Lion, the Witch and the Wardrobe",
-    "author": "C.S. Lewis",
-    "cover": null,
-    "key": "pop-the-lion-the-witch-and-the-wardrobe-c-s-lewis"
   },
   {
     "title": "A Game of Thrones",
@@ -781,12 +727,6 @@ const POPULAR_BOOKS = [
     "key": "pop-catching-fire-suzanne-collins"
   },
   {
-    "title": "Mockingjay",
-    "author": "Suzanne Collins",
-    "cover": null,
-    "key": "pop-mockingjay-suzanne-collins"
-  },
-  {
     "title": "Twilight",
     "author": "Stephenie Meyer",
     "cover": "https://books.google.com/books/content?id=lGjFtMRqp_YC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
@@ -815,12 +755,6 @@ const POPULAR_BOOKS = [
     "author": "Stephen Chbosky",
     "cover": "https://books.google.com/books/content?id=xFNG764pnOgC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
     "key": "pop-the-perks-of-being-a-wallflower-stephen-chbosky"
-  },
-  {
-    "title": "Looking for Alaska",
-    "author": "John Green",
-    "cover": null,
-    "key": "pop-looking-for-alaska-john-green"
   },
   {
     "title": "The Giver",

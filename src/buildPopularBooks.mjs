@@ -18,6 +18,25 @@ import { writeFileSync } from "node:fs";
 
 const API_KEY = process.env.GOOGLE_BOOKS_API_KEY || "";
 
+// Running without a key uses Google's tiny anonymous per-IP quota, which causes
+// near-instant 429s. Bail out loudly so this never happens by accident.
+if (!API_KEY) {
+  console.error(
+    "\n  ERROR: No API key found.\n" +
+      "  The script would run against Google's anonymous quota and get rate-limited (429).\n\n" +
+      "  Set it first, then re-run:\n" +
+      '    PowerShell:  $env:GOOGLE_BOOKS_API_KEY = "your_real_key_here"\n' +
+      "    then:        node buildPopularBooks.mjs\n\n" +
+      "  Verify it's set with:  echo $env:GOOGLE_BOOKS_API_KEY\n"
+  );
+  process.exit(1);
+}
+
+// Show that a key is loaded (masked) so you can confirm it's actually being used.
+console.log(
+  `Using API key: ${API_KEY.slice(0, 6)}...${API_KEY.slice(-4)} (length ${API_KEY.length})`
+);
+
 const slug = (s) =>
   s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
@@ -200,6 +219,33 @@ const RAW = [
   ["The Gifts of Imperfection", "Brené Brown"],
   ["A Brief History of Time", "Stephen Hawking"],
   ["Steve Jobs", "Walter Isaacson"],
+  // Additional widely-searched titles
+  ["Siddhartha", "Hermann Hesse"],
+  ["Steppenwolf", "Hermann Hesse"],
+  ["The Stranger", "Albert Camus"],
+  ["The Trial", "Franz Kafka"],
+  ["The Metamorphosis", "Franz Kafka"],
+  ["A Clockwork Orange", "Anthony Burgess"],
+  ["The Road", "Cormac McCarthy"],
+  ["Blood Meridian", "Cormac McCarthy"],
+  ["No Country for Old Men", "Cormac McCarthy"],
+  ["The Secret History", "Donna Tartt"],
+  ["The Goldfinch", "Donna Tartt"],
+  ["A Little Life", "Hanya Yanagihara"],
+  ["The Midnight Library", "Matt Haig"],
+  ["Klara and the Sun", "Kazuo Ishiguro"],
+  ["Circe", "Madeline Miller"],
+  ["The Song of Achilles", "Madeline Miller"],
+  ["Dune Messiah", "Frank Herbert"],
+  ["The Two Towers", "J.R.R. Tolkien"],
+  ["The Return of the King", "J.R.R. Tolkien"],
+  ["The Wise Man's Fear", "Patrick Rothfuss"],
+  ["Words of Radiance", "Brandon Sanderson"],
+  ["The Power of Positive Thinking", "Norman Vincent Peale"],
+  ["Can't Hurt Me", "David Goggins"],
+  ["Deep Work", "Cal Newport"],
+  ["Ikigai", "Héctor García"],
+  ["The 48 Laws of Power", "Robert Greene"],
 ];
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -207,12 +253,24 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 // Force https so the cover loads on an https site (Google sometimes returns http).
 const toHttps = (url) => (url ? url.replace(/^http:\/\//, "https://") : null);
 
-async function fetchCover(title, author) {
+async function fetchCover(title, author, retries = 0) {
   const q = encodeURIComponent(`${title} ${author}`);
   const keyParam = API_KEY ? `&key=${API_KEY}` : "";
   const url = `https://www.googleapis.com/books/v1/volumes?q=${q}&maxResults=1${keyParam}`;
   try {
     const res = await fetch(url);
+    if (res.status === 429) {
+      // Rate limited. Back off and retry up to 3 times.
+      if (retries < 3) {
+        const backoffMs = 1500 + retries * 1000; // 1.5s, 2.5s, 3.5s
+        console.warn(`  ! 429 rate limit for "${title}" — backing off ${backoffMs}ms, retry ${retries + 1}/3`);
+        await sleep(backoffMs);
+        return fetchCover(title, author, retries + 1);
+      } else {
+        console.warn(`  ! 429 (gave up after retries) for "${title}"`);
+        return null;
+      }
+    }
     if (!res.ok) {
       console.warn(`  ! ${res.status} for "${title}"`);
       return null;
@@ -236,7 +294,7 @@ async function main() {
     if (cover) hit++;
     out.push({ title, author, cover, key: "pop-" + slug(title + "-" + author) });
     process.stdout.write(`\r  ${i + 1}/${RAW.length} (${hit} covers found)   `);
-    await sleep(120); // be polite to the API / avoid rate limits
+    await sleep(250); // be polite to the API / avoid rate limits (increased from 120ms)
   }
   console.log("");
 
