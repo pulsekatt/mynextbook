@@ -216,16 +216,27 @@ export default function App() {
         const res = await fetch(
           `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
             query
-          )}&orderBy=relevance&maxResults=15&key=${GOOGLE_BOOKS_API_KEY}`,
+          )}&maxResults=15&key=${GOOGLE_BOOKS_API_KEY}`,
           { signal: controller.signal }
         );
         const data = await res.json();
-        const liveResults = (data.items || []).map((b) => ({
-          title: b.volumeInfo.title,
-          author: b.volumeInfo.authors?.[0] || "Unknown",
-          cover: b.volumeInfo.imageLinks?.smallThumbnail || b.volumeInfo.imageLinks?.thumbnail || null,
-          key: b.id,
-        }));
+        // Surface API-level errors (bad/blocked key, quota exceeded, etc.) instead
+        // of silently showing an empty dropdown. data.error is Google's error shape.
+        if (!res.ok || data.error) {
+          console.error(
+            "Google Books search error:",
+            res.status,
+            data.error?.message || "(no message)"
+          );
+        }
+        const liveResults = (data.items || [])
+          .filter((b) => b && b.volumeInfo && b.volumeInfo.title)
+          .map((b) => ({
+            title: b.volumeInfo.title,
+            author: b.volumeInfo.authors?.[0] || "Unknown",
+            cover: b.volumeInfo.imageLinks?.smallThumbnail || b.volumeInfo.imageLinks?.thumbnail || null,
+            key: b.id,
+          }));
 
         // Merge: prioritize live results with covers, then cached, then live without covers.
         // Dedupe on BOTH the source key AND a normalized title+author signature,
