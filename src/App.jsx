@@ -567,8 +567,18 @@ export default function App() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => {
-              if (query.length === 0 && cachedBooks.length > 0) {
+              if (cachedBooks.length === 0) return;
+              if (query.length === 0) {
                 setDropdown(cachedBooks.slice(0, 15));
+              } else {
+                const filtered = cachedBooks.filter(
+                  (b) =>
+                    b.title.toLowerCase().includes(query.toLowerCase()) ||
+                    b.author.toLowerCase().includes(query.toLowerCase())
+                );
+                if (filtered.length > 0) {
+                  setDropdown(filtered.slice(0, 15));
+                }
               }
             }}
             onKeyDown={(e) => {
