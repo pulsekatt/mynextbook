@@ -389,15 +389,44 @@ export default function App() {
           try {
             const coverRes = await fetch(
               `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
-                r.title + " " + r.author
-              )}&maxResults=1&key=${GOOGLE_BOOKS_API_KEY}`,
+                `intitle:${r.title} inauthor:${r.author}`
+              )}&maxResults=5&key=${GOOGLE_BOOKS_API_KEY}`,
               { signal: controller.signal }
             );
             const coverData = await coverRes.json();
-            const info = coverData.items?.[0]?.volumeInfo || {};
+            let items = coverData.items || [];
+
+            // If the strict intitle/inauthor query found nothing, retry with a
+            // looser plain-text query — some catalog titles differ slightly.
+            if (items.length === 0) {
+              const loose = await fetch(
+                `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
+                  r.title + " " + r.author
+                )}&maxResults=5&key=${GOOGLE_BOOKS_API_KEY}`,
+                { signal: controller.signal }
+              );
+              const looseData = await loose.json();
+              items = looseData.items || [];
+            }
+
+            // Find the first edition that actually has a cover image.
+            let info = items[0]?.volumeInfo || {};
+            let cover = null;
+            for (const it of items) {
+              const links = it.volumeInfo?.imageLinks;
+              const c = links?.thumbnail || links?.smallThumbnail;
+              if (c) {
+                cover = c;
+                info = it.volumeInfo; // use the edition we got the cover from for genre/pages too
+                break;
+              }
+            }
+            // Force https so the image loads on an https site (avoid mixed-content block).
+            cover = cover ? cover.replace(/^http:\/\//, "https://") : null;
+
             return {
               ...r,
-              cover: info.imageLinks?.thumbnail || null,
+              cover,
               genre: info.categories?.[0] || null,
               pages: info.pageCount || null,
               published: info.publishedDate ? String(info.publishedDate).slice(0, 4) : null,
