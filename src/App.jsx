@@ -227,7 +227,7 @@ export default function App() {
 
       const { recommendations: recs } = await res.json();
 
-      // Pull factual fields (cover, genre, pages, year, rating) from Google Books
+      // Pull factual fields (cover, genre, pages, year) from Google Books
       // — these are real data, unlike anything the model would guess.
       const recsWithCovers = await Promise.all(
         recs.map(async (r) => {
@@ -245,7 +245,6 @@ export default function App() {
               genre: info.categories?.[0] || null,
               pages: info.pageCount || null,
               published: info.publishedDate ? String(info.publishedDate).slice(0, 4) : null,
-              rating: info.averageRating || null,
             };
           } catch {
             return { ...r, cover: null };
@@ -957,7 +956,7 @@ export default function App() {
               ✨ Your next reads
             </h3>
             {recommendations.map((r, i) => {
-              const hasMoreInfo = r.genre || r.pages || r.published || r.rating;
+              const hasMoreInfo = r.genre || r.pages || r.published;
               return (
               <div
                 key={r.title + r.author}
@@ -1148,7 +1147,6 @@ export default function App() {
                       {r.genre && <InfoPill icon="📚" label={r.genre} />}
                       {r.pages && <InfoPill icon="📄" label={`${r.pages} pages`} />}
                       {r.published && <InfoPill icon="📅" label={r.published} />}
-                      {r.rating && <InfoPill icon="⭐" label={`${r.rating} / 5`} />}
                     </div>
                   </div>
                 </div>
