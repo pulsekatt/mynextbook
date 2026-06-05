@@ -128,7 +128,7 @@ export default function App() {
     );
 
     if (filtered.length > 0) {
-      setDropdown(filtered.slice(0, 5));
+      setDropdown(filtered.slice(0, 15));
       setSelectedIndex(-1);
       setSearching(false);
       clearTimeout(debounceRef.current);
@@ -142,7 +142,7 @@ export default function App() {
         const res = await fetch(
           `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
             query
-          )}&maxResults=5&key=${GOOGLE_BOOKS_API_KEY}`
+          )}&maxResults=15&key=${GOOGLE_BOOKS_API_KEY}`
         );
         const data = await res.json();
         setDropdown(
@@ -568,7 +568,7 @@ export default function App() {
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => {
               if (query.length === 0 && cachedBooks.length > 0) {
-                setDropdown(cachedBooks.slice(0, 5));
+                setDropdown(cachedBooks.slice(0, 15));
               }
             }}
             onKeyDown={(e) => {
@@ -630,7 +630,10 @@ export default function App() {
                 width: "100%",
                 zIndex: 10,
                 boxShadow: "0 8px 30px rgba(99,60,180,0.12)",
-                overflow: "hidden",
+                overflowX: "hidden",
+                overflowY: "auto",
+                maxHeight: 360,
+                overscrollBehavior: "contain",
                 animation: collapsed ? "dropdownRevealUp 0.25s ease-out" : "dropdownReveal 0.25s ease-out",
               }}
             >
