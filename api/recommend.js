@@ -1,17 +1,26 @@
 // api/recommend.js
 // Vercel serverless function. Runs on the server, so GEMINI_API_KEY is never
 // shipped to the browser. The client POSTs { myBooks, notInterested } here.
+//
+// Reliability strategy:
+//   1. Try the primary model, retrying a couple times on transient errors.
+//   2. If the primary model is still overloaded (503), fall back to a second,
+//      less-contended model and try that too.
+//   3. Only fail if BOTH models are unavailable.
 
-// Small helper: pause for `ms` milliseconds.
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-// Call Gemini, retrying on transient errors (503 overloaded, 429 rate-limited,
-// 500 server error). Waits a bit longer between each attempt (backoff).
-async function callGeminiWithRetry(body, apiKey, maxAttempts = 4) {
-  let lastErr = "";
+// Primary first, fallback second. 2.5-flash is older/less busy, so it usually
+// answers when 3.5-flash is slammed. Both are fine for this task.
+const MODELS = ["gemini-3.5-flash", "gemini-2.5-flash"];
+
+// Call ONE model, retrying on transient errors (503 overloaded, 429 rate-limited,
+// 500 server error). Returns the parsed response, or throws with .status set.
+async function callModel(model, body, apiKey, maxAttempts = 2) {
+  let lastDetail = "";
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     const resp = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent",
+      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
       {
         method: "POST",
         headers: {
@@ -24,22 +33,41 @@ async function callGeminiWithRetry(body, apiKey, maxAttempts = 4) {
 
     if (resp.ok) return resp;
 
-    lastErr = await resp.text();
+    lastDetail = await resp.text();
     const transient = [429, 500, 503].includes(resp.status);
 
-    // If it's not a transient error, or we're out of attempts, stop.
     if (!transient || attempt === maxAttempts) {
-      const err = new Error(`Gemini ${resp.status}`);
+      const err = new Error(`${model} -> ${resp.status}`);
       err.status = resp.status;
-      err.detail = lastErr;
+      err.detail = lastDetail;
       throw err;
     }
 
-    // Wait before retrying: 0.6s, then 1.2s, then 2.4s...
-    const wait = 600 * Math.pow(2, attempt - 1);
-    console.warn(`Gemini ${resp.status}, retrying in ${wait}ms (attempt ${attempt}/${maxAttempts})`);
+    const wait = 500 * attempt; // 500ms, then 1000ms
+    console.warn(`${model} returned ${resp.status}, retrying in ${wait}ms (attempt ${attempt}/${maxAttempts})`);
     await sleep(wait);
   }
+}
+
+// Try each model in order. Move to the next model only on transient errors;
+// for a real error (bad request, bad key) stop immediately — fallback won't help.
+async function getGeminiResponse(body, apiKey) {
+  let lastErr;
+  for (const model of MODELS) {
+    try {
+      const resp = await callModel(model, body, apiKey);
+      if (model !== MODELS[0]) {
+        console.warn(`Primary model busy; served from fallback model ${model}`);
+      }
+      return resp;
+    } catch (err) {
+      lastErr = err;
+      const transient = [429, 500, 503].includes(err.status);
+      if (!transient) throw err; // non-transient: don't bother with fallback
+      console.warn(`${model} unavailable (${err.status}); trying next model`);
+    }
+  }
+  throw lastErr; // all models exhausted
 }
 
 export default async function handler(req, res) {
@@ -74,17 +102,16 @@ export default async function handler(req, res) {
 
     let geminiRes;
     try {
-      geminiRes = await callGeminiWithRetry(
+      geminiRes = await getGeminiResponse(
         { contents: [{ parts: [{ text: prompt }] }] },
         apiKey
       );
     } catch (err) {
       console.error("Gemini API error:", err.status, err.detail);
-      // 503 = model overloaded; tell the client it's temporary so it can say so.
       if (err.status === 503 || err.status === 429) {
         return res
           .status(503)
-          .json({ error: "The recommendation model is busy right now. Please try again in a moment." });
+          .json({ error: "The recommendation models are busy right now. Please try again in a moment." });
       }
       return res.status(502).json({ error: "Recommendation service failed" });
     }
