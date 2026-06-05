@@ -1,23 +1,13 @@
 import { useState, useEffect, useRef } from "react";
+import POPULAR_BOOKS from "./popularBooks";
 
 const GOOGLE_BOOKS_API_KEY = import.meta.env.VITE_GOOGLE_BOOKS_API_KEY;
 const AMAZON_TAG = import.meta.env.VITE_AMAZON_TAG;
 
 // Bestseller cache: persisted in localStorage with a 24h TTL so repeat visits
 // hit instant-search from second 0 without re-fetching anything.
-const CACHED_BOOKS_KEY = "cachedBestsellers_v1";
+const CACHED_BOOKS_KEY = "popularBookCovers_v2";
 const CACHED_BOOKS_TTL_MS = 24 * 60 * 60 * 1000;
-
-// Seed queries: broad coverage across genres, so popular books in any category
-// (Tolle, Tolkien, King, Atwood, etc.) end up in the cache and hit instantly.
-const SEED_QUERIES = [
-  "bestseller",
-  "classic novels",
-  "fantasy bestseller",
-  "science fiction bestseller",
-  "self help bestseller",
-  "thriller mystery bestseller",
-];
 
 const LOADING_MESSAGES = [
   "📖 Analysing your reading taste...",
@@ -35,6 +25,7 @@ export default function App() {
   const [hoveredAlreadyRead, setHoveredAlreadyRead] = useState(null);
   const [hoveredHome, setHoveredHome] = useState(false);
   const [hoveredClearAll, setHoveredClearAll] = useState(false);
+  const [hoveredStop, setHoveredStop] = useState(false);
   const [isMobile, setIsMobile] = useState(
     typeof window !== "undefined" ? window.innerWidth <= 600 : false
   );
@@ -47,7 +38,7 @@ export default function App() {
   const [booksExpanded, setBooksExpanded] = useState(false);
   const [expandedRec, setExpandedRec] = useState(null);
   const [selectedIndex, setSelectedIndex] = useState(-1);
-  const [cachedBooks, setCachedBooks] = useState([]);
+  const [cachedBooks, setCachedBooks] = useState(POPULAR_BOOKS);
   const [dismissing, setDismissing] = useState(null);
   const [myBooks, setMyBooks] = useState(() => {
     const saved = localStorage.getItem("myBooks");
@@ -64,82 +55,78 @@ export default function App() {
   const [error, setError] = useState("");
   const [searching, setSearching] = useState(false);
   const debounceRef = useRef(null);
+  const searchAbortRef = useRef(null);
   const dropdownRef = useRef(null);
   const loadingRef = useRef(null);
   const progressRef = useRef(null);
   const progressStartRef = useRef(null);
 
   useEffect(() => {
-    const loadCachedBooks = async () => {
-      // 1. Try a fresh localStorage cache first — instant, no network at all.
+    // The curated POPULAR_BOOKS list is already seeded into cachedBooks, so
+    // instant local search works from second 0 with no network at all.
+    // This effect only *enriches* those entries with real cover thumbnails
+    // (fetched lazily from Google Books, cached in localStorage for 24h).
+    const enrichCovers = async () => {
+      // 1. Apply a fresh localStorage cover-map if we have one.
       try {
         const raw = localStorage.getItem(CACHED_BOOKS_KEY);
         if (raw) {
           const parsed = JSON.parse(raw);
           if (
             parsed &&
-            Array.isArray(parsed.books) &&
-            parsed.books.length > 0 &&
+            parsed.covers &&
             typeof parsed.timestamp === "number" &&
             Date.now() - parsed.timestamp < CACHED_BOOKS_TTL_MS
           ) {
-            setCachedBooks(parsed.books);
+            setCachedBooks((prev) =>
+              prev.map((b) => (parsed.covers[b.key] ? { ...b, cover: parsed.covers[b.key] } : b))
+            );
             return;
           }
         }
       } catch {
-        // fall through to a fresh fetch
+        // fall through and re-fetch
       }
 
-      // 2. Fan out the seed queries in parallel, merge + dedupe by Google Books ID.
-      try {
-        const results = await Promise.all(
-          SEED_QUERIES.map(async (q) => {
+      // 2. Fetch covers in small sequential batches so we don't hammer the API.
+      const covers = {};
+      const BATCH = 8;
+      for (let i = 0; i < POPULAR_BOOKS.length; i += BATCH) {
+        const slice = POPULAR_BOOKS.slice(i, i + BATCH);
+        await Promise.all(
+          slice.map(async (b) => {
             try {
               const res = await fetch(
                 `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
-                  q
-                )}&orderBy=relevance&maxResults=30&key=${GOOGLE_BOOKS_API_KEY}`
+                  b.title + " " + b.author
+                )}&maxResults=1&key=${GOOGLE_BOOKS_API_KEY}`
               );
-              if (!res.ok) return [];
+              if (!res.ok) return;
               const data = await res.json();
-              return data.items || [];
+              const img = data.items?.[0]?.volumeInfo?.imageLinks;
+              const cover = img?.smallThumbnail || img?.thumbnail || null;
+              if (cover) covers[b.key] = cover;
             } catch {
-              return [];
+              // skip this cover; placeholder emoji will show
             }
           })
         );
+        // Apply progressively so covers pop in as they arrive.
+        setCachedBooks((prev) =>
+          prev.map((bk) => (covers[bk.key] ? { ...bk, cover: covers[bk.key] } : bk))
+        );
+      }
 
-        const seen = new Map();
-        for (const items of results) {
-          for (const b of items) {
-            if (!seen.has(b.id) && b.volumeInfo?.title) {
-              seen.set(b.id, {
-                title: b.volumeInfo.title,
-                author: b.volumeInfo.authors?.[0] || "Unknown",
-                cover: b.volumeInfo.imageLinks?.smallThumbnail || null,
-                key: b.id,
-              });
-            }
-          }
-        }
-        const books = Array.from(seen.values());
-        setCachedBooks(books);
-
-        // Persist for repeat visits within the TTL.
-        try {
-          localStorage.setItem(
-            CACHED_BOOKS_KEY,
-            JSON.stringify({ books, timestamp: Date.now() })
-          );
-        } catch {
-          // localStorage might be disabled / full — not critical, search still works.
-        }
-      } catch (err) {
-        console.error("Failed to load cached books:", err);
+      try {
+        localStorage.setItem(
+          CACHED_BOOKS_KEY,
+          JSON.stringify({ covers, timestamp: Date.now() })
+        );
+      } catch {
+        // localStorage disabled/full — not critical, list still works without covers.
       }
     };
-    loadCachedBooks();
+    enrichCovers();
   }, []);
 
   useEffect(() => {
@@ -228,11 +215,14 @@ export default function App() {
     setSearching(true);
     clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(async () => {
+      const controller = new AbortController();
+      searchAbortRef.current = controller;
       try {
         const res = await fetch(
           `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
             query
-          )}&orderBy=relevance&maxResults=15&key=${GOOGLE_BOOKS_API_KEY}`
+          )}&orderBy=relevance&maxResults=15&key=${GOOGLE_BOOKS_API_KEY}`,
+          { signal: controller.signal }
         );
         const data = await res.json();
         setDropdown(
@@ -246,8 +236,10 @@ export default function App() {
         setDropdownOpen(true);
         setSelectedIndex(-1);
       } catch (err) {
-        console.error(err);
+        // AbortError is expected when the user hits Stop — ignore it.
+        if (err.name !== "AbortError") console.error(err);
       } finally {
+        searchAbortRef.current = null;
         setSearching(false);
       }
     }, 200);
@@ -262,6 +254,14 @@ export default function App() {
   };
 
   const removeBook = (key) => setMyBooks(myBooks.filter((b) => b.key !== key));
+
+  // Cancel an in-flight book search (debounce + fetch) and reset the spinner.
+  const stopSearch = () => {
+    clearTimeout(debounceRef.current);
+    if (searchAbortRef.current) searchAbortRef.current.abort();
+    searchAbortRef.current = null;
+    setSearching(false);
+  };
 
   const clearAll = () => {
     setMyBooks([]);
@@ -519,6 +519,9 @@ export default function App() {
           0% { opacity: 0; transform: translateY(8px); max-height: 0; }
           100% { opacity: 1; transform: translateY(0); max-height: 400px; }
         }
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
 
         /* ---- Mobile tweaks (phones) ---- */
         @media (max-width: 600px) {
@@ -534,6 +537,10 @@ export default function App() {
           .search-wrap {
             width: 100% !important;
             margin-left: 0 !important;
+          }
+          .search-label {
+            font-size: 11px !important;
+            margin-bottom: 5px !important;
           }
 
           /* 3. Stack the "how it works" cards vertically on mobile */
@@ -756,6 +763,23 @@ export default function App() {
           style={{ position: "relative", marginBottom: collapsed ? 0 : 10, width: "min(960px, 92vw)", marginLeft: "calc(50% - min(480px, 46vw))" }}
           ref={dropdownRef}
         >
+          {!collapsed && (
+            <label
+              className="search-label"
+              style={{
+                display: "block",
+                textAlign: "left",
+                marginLeft: 4,
+                marginBottom: 7,
+                color: "#7c6faa",
+                fontSize: 13,
+                fontWeight: 600,
+                letterSpacing: 0.2,
+              }}
+            >
+              📚 Books you've read
+            </label>
+          )}
           <input
             className={collapsed ? "search-input collapsed" : "search-input"}
             value={query}
@@ -799,18 +823,43 @@ export default function App() {
             }}
           />
           {searching && (
-            <div
+            <button
+              onClick={stopSearch}
+              onMouseEnter={() => setHoveredStop(true)}
+              onMouseLeave={() => setHoveredStop(false)}
               style={{
                 position: "absolute",
-                right: 16,
+                right: 14,
                 top: "50%",
-                transform: "translateY(-50%)",
-                color: "#a78bfa",
+                transform: hoveredStop ? "translateY(-50%) scale(1.05)" : "translateY(-50%) scale(1)",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 7,
+                background: hoveredStop ? "#fef2f2" : "#f0ebff",
+                color: hoveredStop ? "#dc2626" : "#7c3aed",
+                border: "1px solid",
+                borderColor: hoveredStop ? "#fca5a5" : "#e2d9f3",
+                borderRadius: 99,
+                padding: "6px 14px",
                 fontSize: 13,
+                fontWeight: 600,
+                cursor: "pointer",
+                transition: "all 0.2s ease",
               }}
             >
-              searching...
-            </div>
+              <span
+                style={{
+                  width: 11,
+                  height: 11,
+                  border: "2px solid currentColor",
+                  borderTopColor: "transparent",
+                  borderRadius: "50%",
+                  display: "inline-block",
+                  animation: "spin 0.7s linear infinite",
+                }}
+              />
+              Stop
+            </button>
           )}
           {dropdownOpen && dropdown.length > 0 && (
             <div
