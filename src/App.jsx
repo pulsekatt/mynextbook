@@ -3,6 +3,22 @@ import { useState, useEffect, useRef } from "react";
 const GOOGLE_BOOKS_API_KEY = import.meta.env.VITE_GOOGLE_BOOKS_API_KEY;
 const AMAZON_TAG = import.meta.env.VITE_AMAZON_TAG;
 
+// Bestseller cache: persisted in localStorage with a 24h TTL so repeat visits
+// hit instant-search from second 0 without re-fetching anything.
+const CACHED_BOOKS_KEY = "cachedBestsellers_v1";
+const CACHED_BOOKS_TTL_MS = 24 * 60 * 60 * 1000;
+
+// Seed queries: broad coverage across genres, so popular books in any category
+// (Tolle, Tolkien, King, Atwood, etc.) end up in the cache and hit instantly.
+const SEED_QUERIES = [
+  "bestseller",
+  "classic novels",
+  "fantasy bestseller",
+  "science fiction bestseller",
+  "self help bestseller",
+  "thriller mystery bestseller",
+];
+
 const LOADING_MESSAGES = [
   "📖 Analysing your reading taste...",
   "🔍 Searching the literary universe...",
@@ -49,18 +65,70 @@ export default function App() {
 
   useEffect(() => {
     const loadCachedBooks = async () => {
+      // 1. Try a fresh localStorage cache first — instant, no network at all.
       try {
-        const res = await fetch(
-          `https://www.googleapis.com/books/v1/volumes?q=bestseller&orderBy=relevance&maxResults=50&key=${GOOGLE_BOOKS_API_KEY}`
+        const raw = localStorage.getItem(CACHED_BOOKS_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (
+            parsed &&
+            Array.isArray(parsed.books) &&
+            parsed.books.length > 0 &&
+            typeof parsed.timestamp === "number" &&
+            Date.now() - parsed.timestamp < CACHED_BOOKS_TTL_MS
+          ) {
+            setCachedBooks(parsed.books);
+            return;
+          }
+        }
+      } catch {
+        // fall through to a fresh fetch
+      }
+
+      // 2. Fan out the seed queries in parallel, merge + dedupe by Google Books ID.
+      try {
+        const results = await Promise.all(
+          SEED_QUERIES.map(async (q) => {
+            try {
+              const res = await fetch(
+                `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
+                  q
+                )}&orderBy=relevance&maxResults=30&key=${GOOGLE_BOOKS_API_KEY}`
+              );
+              if (!res.ok) return [];
+              const data = await res.json();
+              return data.items || [];
+            } catch {
+              return [];
+            }
+          })
         );
-        const data = await res.json();
-        const books = (data.items || []).map((b) => ({
-          title: b.volumeInfo.title,
-          author: b.volumeInfo.authors?.[0] || "Unknown",
-          cover: b.volumeInfo.imageLinks?.smallThumbnail || null,
-          key: b.id,
-        }));
+
+        const seen = new Map();
+        for (const items of results) {
+          for (const b of items) {
+            if (!seen.has(b.id) && b.volumeInfo?.title) {
+              seen.set(b.id, {
+                title: b.volumeInfo.title,
+                author: b.volumeInfo.authors?.[0] || "Unknown",
+                cover: b.volumeInfo.imageLinks?.smallThumbnail || null,
+                key: b.id,
+              });
+            }
+          }
+        }
+        const books = Array.from(seen.values());
         setCachedBooks(books);
+
+        // Persist for repeat visits within the TTL.
+        try {
+          localStorage.setItem(
+            CACHED_BOOKS_KEY,
+            JSON.stringify({ books, timestamp: Date.now() })
+          );
+        } catch {
+          // localStorage might be disabled / full — not critical, search still works.
+        }
       } catch (err) {
         console.error("Failed to load cached books:", err);
       }
@@ -144,7 +212,7 @@ export default function App() {
         const res = await fetch(
           `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
             query
-          )}&maxResults=15&key=${GOOGLE_BOOKS_API_KEY}`
+          )}&orderBy=relevance&maxResults=15&key=${GOOGLE_BOOKS_API_KEY}`
         );
         const data = await res.json();
         setDropdown(
