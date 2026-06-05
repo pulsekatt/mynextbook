@@ -33,6 +33,7 @@ export default function App() {
   const [hoveredInfo, setHoveredInfo] = useState(null);
   const [hoveredNotInterested, setHoveredNotInterested] = useState(null);
   const [hoveredAlreadyRead, setHoveredAlreadyRead] = useState(null);
+  const [hoveredHome, setHoveredHome] = useState(false);
   const [query, setQuery] = useState("");
   const [dropdown, setDropdown] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -62,6 +63,7 @@ export default function App() {
   const dropdownRef = useRef(null);
   const loadingRef = useRef(null);
   const progressRef = useRef(null);
+  const progressStartRef = useRef(null);
 
   useEffect(() => {
     const loadCachedBooks = async () => {
@@ -160,15 +162,23 @@ export default function App() {
       setProgress(0);
       setLoadingMsg(0);
       let msg = 0;
-      let prog = 0;
       loadingRef.current = setInterval(() => {
         msg = (msg + 1) % LOADING_MESSAGES.length;
         setLoadingMsg(msg);
       }, 1800);
+
+      // Smooth, time-based easing. Instead of random jumps that slam to 90%
+      // and then stall, we ease continuously toward ~95% over a long horizon
+      // so the bar keeps creeping the whole time it's loading.
+      const EXPECTED_MS = 14000; // rough horizon; bar approaches 95% over this
+      progressStartRef.current = Date.now();
       progressRef.current = setInterval(() => {
-        prog = Math.min(prog + Math.random() * 8, 90);
-        setProgress(prog);
-      }, 300);
+        const elapsed = Date.now() - progressStartRef.current;
+        const t = elapsed / EXPECTED_MS;
+        // easeOut curve: fast-ish at first, gently decelerating, capped at 95%.
+        const eased = 1 - Math.pow(1 - Math.min(t, 1), 2.2);
+        setProgress(Math.min(eased * 95, 95));
+      }, 80);
     } else {
       setProgress(100);
       clearInterval(loadingRef.current);
@@ -243,6 +253,17 @@ export default function App() {
 
   const removeBook = (key) => setMyBooks(myBooks.filter((b) => b.key !== key));
 
+  // Reset back to the "home" state: clears recommendations and scrolls up,
+  // but keeps the user's books so they can tweak and search again.
+  const goHome = () => {
+    setRecommendations([]);
+    setExpandedRec(null);
+    setError("");
+    setBooksExpanded(false);
+    setDismissing(null);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const dismissRec = (idx, direction = "right") => {
     if (direction === "right") {
       const rec = recommendations[idx];
@@ -257,7 +278,7 @@ export default function App() {
       setDismissing(null);
       if (expandedRec === idx) setExpandedRec(null);
       else if (expandedRec !== null && expandedRec > idx) setExpandedRec(expandedRec - 1);
-    }, 350);
+    }, 650);
   };
 
   const markAsRead = (idx) => {
@@ -459,20 +480,20 @@ export default function App() {
         }
         @keyframes dismissSlide {
           0% { opacity: 1; transform: translateX(0); max-height: 300px; margin-bottom: 16px; }
-          50% { opacity: 0; transform: translateX(60px); max-height: 300px; margin-bottom: 16px; }
-          100% { opacity: 0; transform: translateX(60px); max-height: 0; margin-bottom: 0; padding: 0; }
+          55% { opacity: 0; transform: translateX(80px); max-height: 300px; margin-bottom: 16px; }
+          100% { opacity: 0; transform: translateX(80px); max-height: 0; margin-bottom: 0; padding: 0; }
         }
         @keyframes dismissSlideLeft {
           0% { opacity: 1; transform: translateX(0); max-height: 300px; margin-bottom: 16px; }
-          50% { opacity: 0; transform: translateX(-60px); max-height: 300px; margin-bottom: 16px; }
-          100% { opacity: 0; transform: translateX(-60px); max-height: 0; margin-bottom: 0; padding: 0; }
+          55% { opacity: 0; transform: translateX(-80px); max-height: 300px; margin-bottom: 16px; }
+          100% { opacity: 0; transform: translateX(-80px); max-height: 0; margin-bottom: 0; padding: 0; }
         }
         .rec-dismissing {
-          animation: dismissSlide 0.35s ease-out forwards;
+          animation: dismissSlide 0.65s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
           overflow: hidden;
         }
         .rec-dismissing-left {
-          animation: dismissSlideLeft 0.35s ease-out forwards;
+          animation: dismissSlideLeft 0.65s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
           overflow: hidden;
         }
         @keyframes dropdownReveal {
@@ -494,7 +515,7 @@ export default function App() {
             width: `${progress}%`,
             height: 3,
             background: "linear-gradient(90deg, #c084fc, #818cf8)",
-            transition: "width 0.3s ease",
+            transition: "width 0.2s linear",
             zIndex: 999,
           }}
         />
@@ -510,6 +531,39 @@ export default function App() {
           overflow: "hidden",
         }}
       >
+        {/* Home button — only shown once recommendations exist. */}
+        {collapsed && (
+          <button
+            onClick={goHome}
+            onMouseEnter={() => setHoveredHome(true)}
+            onMouseLeave={() => setHoveredHome(false)}
+            style={{
+              position: "absolute",
+              top: 20,
+              right: 20,
+              zIndex: 2,
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 7,
+              background: hoveredHome ? "rgba(167,139,250,0.28)" : "rgba(167,139,250,0.12)",
+              border: "1px solid rgba(167,139,250,0.4)",
+              borderRadius: 99,
+              padding: "8px 16px",
+              color: "#c4b5fd",
+              fontSize: 13,
+              fontWeight: 600,
+              letterSpacing: 0.3,
+              cursor: "pointer",
+              backdropFilter: "blur(4px)",
+              transform: hoveredHome ? "scale(1.05)" : "scale(1)",
+              transition: "transform 0.25s ease, background 0.25s ease",
+            }}
+          >
+            <span style={{ fontSize: 14 }}>🏠</span>
+            <span>Home</span>
+          </button>
+        )}
+
         {[
           { emoji: "📕", left: "7%", top: "20%", size: 46, dur: "12s", delay: "0s", rot: "-12deg", op: 0.26 },
           { emoji: "📗", left: "15%", top: "58%", size: 30, dur: "14s", delay: "1.5s", rot: "8deg", op: 0.12 },
@@ -975,7 +1029,7 @@ export default function App() {
                       width: `${progress}%`,
                       background: "linear-gradient(90deg, #7c3aed, #4f46e5)",
                       borderRadius: 99,
-                      transition: "width 0.3s ease",
+                      transition: "width 0.2s linear",
                     }}
                   />
                 </div>

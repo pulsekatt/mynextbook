@@ -58,7 +58,7 @@ export default async function handler(req, res) {
       ? ` Do NOT recommend any of these books (I'm not interested in them): ${excludeList}.`
       : "";
 
-    const prompt = `Based on these books I've read: ${bookList}.${excludeClause} Recommend 5 new books I'd enjoy. Respond ONLY in JSON array format like this, no other text: [{"title":"Book Title","author":"Author Name","reason":"One sentence why I'd like it","confidence":92,"genre":"Primary genre","themes":["theme1","theme2","theme3"],"details":"A 2-3 sentence deeper explanation of why this book matches the reader's taste, referencing what they've read and what they'll get from it."}]. The confidence field should be a number from 70-99 representing how confident you are this book matches the reader's taste. The themes array should contain 2-4 short theme/topic tags.`;
+    const prompt = `Based on these books I've read: ${bookList}.${excludeClause} Recommend 5 new books I'd enjoy. Respond ONLY in JSON array format like this, no other text: [{"title":"Book Title","author":"Author Name","reason":"One sentence why I'd like it","confidence":92,"genre":"Primary genre","themes":["theme1","theme2","theme3"],"details":"Why this matches the reader's taste."}]. The confidence field should be a number from 70-99 representing how confident you are this book matches the reader's taste. The themes array should contain 2-4 short theme/topic tags. CRITICAL for the "details" field: write 1-2 short, concrete sentences (max ~35 words total). Name the specific shared element (an author, genre, theme, or tone) that connects it to what they've read. Be direct and specific — no filler, no generic praise, no vague phrases like "you'll love this" or "a captivating journey".`;
 
     let claudeRes;
     try {
@@ -67,7 +67,7 @@ export default async function handler(req, res) {
           model: MODEL,
           max_tokens: 2048,
           system:
-            "You are a book recommendation engine. Output ONLY valid JSON matching the requested format — no markdown fences, no preamble, no text outside the JSON array.",
+            "You are a book recommendation engine. Output ONLY valid JSON matching the requested format — no markdown fences, no preamble, no text outside the JSON array. Keep the 'details' field tight and specific: 1-2 sentences, under ~35 words, always naming the concrete reason this book fits the reader.",
           messages: [{ role: "user", content: prompt }],
         },
         apiKey
