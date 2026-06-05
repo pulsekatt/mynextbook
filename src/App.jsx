@@ -34,6 +34,10 @@ export default function App() {
   const [hoveredNotInterested, setHoveredNotInterested] = useState(null);
   const [hoveredAlreadyRead, setHoveredAlreadyRead] = useState(null);
   const [hoveredHome, setHoveredHome] = useState(false);
+  const [hoveredClearAll, setHoveredClearAll] = useState(false);
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" ? window.innerWidth <= 600 : false
+  );
   const [query, setQuery] = useState("");
   const [dropdown, setDropdown] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -136,6 +140,12 @@ export default function App() {
       }
     };
     loadCachedBooks();
+  }, []);
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth <= 600);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
   }, []);
 
   useEffect(() => {
@@ -252,6 +262,11 @@ export default function App() {
   };
 
   const removeBook = (key) => setMyBooks(myBooks.filter((b) => b.key !== key));
+
+  const clearAll = () => {
+    setMyBooks([]);
+    setBooksExpanded(false);
+  };
 
   // Reset back to the "home" state: clears recommendations and scrolls up,
   // but keeps the user's books so they can tweak and search again.
@@ -504,6 +519,57 @@ export default function App() {
           0% { opacity: 0; transform: translateY(8px); max-height: 0; }
           100% { opacity: 1; transform: translateY(0); max-height: 400px; }
         }
+
+        /* ---- Mobile tweaks (phones) ---- */
+        @media (max-width: 600px) {
+          /* 2. Smaller, shorter search bar + placeholder on mobile */
+          .search-input {
+            padding: 16px 14px !important;
+            font-size: 17px !important;
+          }
+          .search-input.collapsed {
+            padding: 11px 14px !important;
+            font-size: 15px !important;
+          }
+          .search-wrap {
+            width: 100% !important;
+            margin-left: 0 !important;
+          }
+
+          /* 3. Stack the "how it works" cards vertically on mobile */
+          .cards-row {
+            flex-direction: column !important;
+            width: 100% !important;
+            margin-left: 0 !important;
+          }
+
+          /* Let other fixed-width regions go full width on mobile */
+          .books-card,
+          .recs-wrap {
+            width: 100% !important;
+            margin-left: 0 !important;
+          }
+
+          /* 4. Recommendation: image first, text below (stack vertically) */
+          .rec-main {
+            flex-direction: column !important;
+            align-items: center !important;
+            text-align: center !important;
+          }
+          .rec-cover,
+          .rec-cover-placeholder {
+            width: 120px !important;
+            height: 174px !important;
+          }
+          .rec-confidence-wrap {
+            text-align: left;
+          }
+
+          /* 5. Slightly smaller recommendation description text on mobile */
+          .rec-details {
+            font-size: 14px !important;
+          }
+        }
       `}</style>
 
       {progress > 0 && (
@@ -686,10 +752,12 @@ export default function App() {
         >
         {/* Search */}
         <div
+          className="search-wrap"
           style={{ position: "relative", marginBottom: collapsed ? 0 : 10, width: "min(960px, 92vw)", marginLeft: "calc(50% - min(480px, 46vw))" }}
           ref={dropdownRef}
         >
           <input
+            className={collapsed ? "search-input collapsed" : "search-input"}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => {
@@ -714,8 +782,8 @@ export default function App() {
             }}
             placeholder={
               myBooks.length > 0
-                ? "🔍 Add more books you've read..."
-                : "🔍 Search for a book you've read..."
+                ? (isMobile ? "🔍 Add more books..." : "🔍 Add more books you've read...")
+                : (isMobile ? "🔍 Search a book..." : "🔍 Search for a book you've read...")
             }
             style={{
               width: "100%",
@@ -944,11 +1012,38 @@ export default function App() {
               <h3 style={{ margin: 0, color: "#1e1b4b", fontSize: collapsed ? 14 : 16, fontWeight: 700 }}>
                 📋 Books I've read ({myBooks.length})
               </h3>
-              {collapsed && (
-                <span style={{ color: "#a78bfa", fontSize: 13, fontWeight: 600 }}>
-                  {booksExpanded ? "Hide ▴" : "Show ▾"}
-                </span>
-              )}
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    clearAll();
+                  }}
+                  onMouseEnter={() => setHoveredClearAll(true)}
+                  onMouseLeave={() => setHoveredClearAll(false)}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 5,
+                    background: hoveredClearAll ? "#fef2f2" : "transparent",
+                    color: hoveredClearAll ? "#dc2626" : "#a78bfa",
+                    border: "1px solid",
+                    borderColor: hoveredClearAll ? "#fca5a5" : "#e2d9f3",
+                    borderRadius: 99,
+                    padding: "5px 12px",
+                    fontSize: 12.5,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    transition: "all 0.2s ease",
+                  }}
+                >
+                  🗑 Clear all
+                </button>
+                {collapsed && (
+                  <span style={{ color: "#a78bfa", fontSize: 13, fontWeight: 600 }}>
+                    {booksExpanded ? "Hide ▴" : "Show ▾"}
+                  </span>
+                )}
+              </div>
             </div>
             {(!collapsed || booksExpanded) &&
               myBooks.map((b) => (
@@ -1081,7 +1176,7 @@ export default function App() {
 
         {/* Recommendations */}
         {recommendations.length > 0 && (
-          <div style={{ order: 2, width: "min(960px, 92vw)", marginLeft: "calc(50% - min(480px, 46vw))" }}>
+          <div className="recs-wrap" style={{ order: 2, width: "min(960px, 92vw)", marginLeft: "calc(50% - min(480px, 46vw))" }}>
             <h3 style={{ color: "#1e1b4b", marginBottom: 16, fontSize: 20, fontWeight: 800 }}>
               ✨ Your next reads
             </h3>
@@ -1111,9 +1206,10 @@ export default function App() {
                   transition: "transform 0.3s ease, box-shadow 0.3s ease",
                 }}
               >
-                <div style={{ display: "flex", gap: 16, marginBottom: 14 }}>
+                <div className="rec-main" style={{ display: "flex", gap: 16, marginBottom: 14 }}>
                   {r.cover ? (
                     <img
+                      className="rec-cover"
                       src={r.cover}
                       alt={r.title}
                       onMouseEnter={() => setHoveredCover(i)}
@@ -1131,6 +1227,7 @@ export default function App() {
                     />
                   ) : (
                     <div
+                      className="rec-cover-placeholder"
                       style={{
                         width: 86,
                         height: 125,
@@ -1146,7 +1243,7 @@ export default function App() {
                       📖
                     </div>
                   )}
-                  <div style={{ flex: 1 }}>
+                  <div className="rec-confidence-wrap" style={{ flex: 1 }}>
                     <div style={{ fontWeight: 800, fontSize: 19, color: "#1e1b4b", marginBottom: 4 }}>
                       {r.title}
                     </div>
@@ -1154,7 +1251,7 @@ export default function App() {
                       by {r.author}
                     </div>
                     {renderConfidence(r.confidence)}
-                    <div style={{ color: "#555", fontSize: 16, lineHeight: 1.6 }}>{r.details}</div>
+                    <div className="rec-details" style={{ color: "#555", fontSize: 16, lineHeight: 1.6 }}>{r.details}</div>
                   </div>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
