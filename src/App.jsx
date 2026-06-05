@@ -37,7 +37,6 @@ export default function App() {
   });
   const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [streaming, setStreaming] = useState(false);
   const [loadingMsg, setLoadingMsg] = useState(0);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState("");
@@ -203,59 +202,11 @@ export default function App() {
     dismissRec(idx, "left");
   };
 
-  // Patch a cover onto an already-shown rec once it loads.
-  const patchCover = (key, cover) =>
-    setRecommendations((prev) => prev.map((r) => (r.key === key ? { ...r, cover } : r)));
-
-  const fetchCover = async (book) => {
-    try {
-      const res = await fetch(
-        `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
-          book.title + " " + book.author
-        )}&maxResults=1&key=${GOOGLE_BOOKS_API_KEY}`
-      );
-      const data = await res.json();
-      const cover = data.items?.[0]?.volumeInfo?.imageLinks?.thumbnail || null;
-      if (cover) patchCover(book.key, cover);
-    } catch {
-      /* leave the placeholder */
-    }
-  };
-
-  // Streaming: read books one-by-one from /api/recommend and render as they arrive.
   const getRecommendations = async () => {
-    if (loading || streaming) return; // guard against double-clicks mid-stream
     setLoading(true);
-    setStreaming(true);
     setError("");
     setRecommendations([]);
     setExpandedRec(null);
-
-    let received = 0;
-    let errored = false;
-
-    const handle = (evt) => {
-      if (evt.type === "book") {
-        const b = evt.book || {};
-        const inNotInterested = notInterested.some(
-          (ni) =>
-            ni.title.toLowerCase() === (b.title || "").toLowerCase() &&
-            ni.author.toLowerCase() === (b.author || "").toLowerCase()
-        );
-        if (inNotInterested) return;
-        const book = { ...b, cover: null, key: (b.title || "") + "-" + (b.author || "") };
-        received++;
-        if (received === 1) setLoading(false); // first book in → drop the big spinner
-        setRecommendations((prev) => [...prev, book]);
-        fetchCover(book);
-      } else if (evt.type === "error") {
-        if (received === 0) {
-          errored = true;
-          setError(evt.error || "Failed to get recommendations. Try again.");
-        }
-      }
-    };
-
     try {
       const res = await fetch("/api/recommend", {
         method: "POST",
@@ -263,8 +214,8 @@ export default function App() {
         body: JSON.stringify({ myBooks, notInterested }),
       });
 
-      // Errors (busy / failure) come back as plain JSON, not a stream.
-      if (!res.ok || !res.body) {
+      // Errors come back as plain JSON with an "error" message.
+      if (!res.ok) {
         let msg = "Failed to get recommendations. Try again.";
         try {
           const j = await res.json();
@@ -274,36 +225,34 @@ export default function App() {
         return;
       }
 
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = "";
+      const { recommendations: recs } = await res.json();
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-        let idx;
-        while ((idx = buffer.indexOf("\n\n")) !== -1) {
-          const raw = buffer.slice(0, idx);
-          buffer = buffer.slice(idx + 2);
-          const line = raw.split("\n").find((l) => l.startsWith("data:"));
-          if (!line) continue;
+      const recsWithCovers = await Promise.all(
+        recs.map(async (r) => {
           try {
-            handle(JSON.parse(line.slice(5).trim()));
+            const coverRes = await fetch(
+              `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
+                r.title + " " + r.author
+              )}&maxResults=1&key=${GOOGLE_BOOKS_API_KEY}`
+            );
+            const coverData = await coverRes.json();
+            const cover =
+              coverData.items?.[0]?.volumeInfo?.imageLinks?.thumbnail || null;
+            return { ...r, cover };
           } catch {
-            /* ignore malformed event */
+            return { ...r, cover: null };
           }
-        }
-      }
+        })
+      );
 
-      if (received === 0 && !errored) {
-        setError("Failed to get recommendations. Try again.");
-      }
+      const sorted = [...recsWithCovers]
+        .filter((r) => !notInterested.some((ni) => ni.title.toLowerCase() === r.title.toLowerCase() && ni.author.toLowerCase() === r.author.toLowerCase()))
+        .sort((a, b) => (b.confidence || 0) - (a.confidence || 0));
+      setRecommendations(sorted);
     } catch (err) {
-      if (received === 0) setError("Failed to get recommendations. Try again.");
+      setError("Failed to get recommendations. Try again.");
     } finally {
       setLoading(false);
-      setStreaming(false);
     }
   };
 
@@ -380,20 +329,6 @@ export default function App() {
         }
         .slide-in {
           animation: slideIn 0.6s ease-out forwards;
-        }
-        @keyframes recIn {
-          0% { opacity: 0; transform: translateY(14px) scale(0.98); }
-          100% { opacity: 1; transform: translateY(0) scale(1); }
-        }
-        .rec-enter {
-          animation: recIn 0.45s ease-out;
-        }
-        @keyframes pulseDot {
-          0%, 100% { opacity: 0.3; }
-          50% { opacity: 1; }
-        }
-        .finding-dot {
-          animation: pulseDot 1s ease-in-out infinite;
         }
         .step-card {
           transition: all 0.3s ease;
@@ -944,7 +879,6 @@ export default function App() {
             ) : (
               <button
                 onClick={getRecommendations}
-                disabled={streaming}
                 onMouseEnter={() => setHoveredFindButton(true)}
                 onMouseLeave={() => setHoveredFindButton(false)}
                 style={{
@@ -955,20 +889,15 @@ export default function App() {
                   border: "none",
                   borderRadius: collapsed ? 10 : 14,
                   fontSize: collapsed ? 14 : 15,
-                  cursor: streaming ? "default" : "pointer",
+                  cursor: "pointer",
                   width: "100%",
                   fontWeight: 700,
                   boxShadow: "0 4px 14px rgba(124,58,237,0.35)",
-                  opacity: streaming ? 0.6 : 1,
-                  transform: hoveredFindButton && !streaming ? "scale(1.02)" : "scale(1)",
-                  transition: "transform 0.3s ease, opacity 0.3s ease",
+                  transform: hoveredFindButton ? "scale(1.02)" : "scale(1)",
+                  transition: "transform 0.3s ease",
                 }}
               >
-                {streaming
-                  ? "🔎 Finding..."
-                  : myBooks.length > 1
-                  ? "🔍 Find more books!"
-                  : "🔍 Find my next book!"}
+                {myBooks.length > 1 ? "🔍 Find more books!" : "🔍 Find my next book!"}
               </button>
             )}
           </div>
@@ -1001,7 +930,7 @@ export default function App() {
             {recommendations.map((r, i) => (
               <div
                 key={r.title + r.author}
-                className={dismissing?.idx === i ? (dismissing.dir === "left" ? "rec-dismissing-left" : "rec-dismissing") : "rec-enter"}
+                className={dismissing?.idx === i ? (dismissing.dir === "left" ? "rec-dismissing-left" : "rec-dismissing") : ""}
                 onMouseEnter={() => setHoveredBook(i)}
                 onMouseLeave={() => setHoveredBook(null)}
                 onClick={() => setExpandedRec(expandedRec === i ? null : i)}
@@ -1227,12 +1156,6 @@ export default function App() {
                 </div>
               </div>
             ))}
-
-            {streaming && (
-              <div style={{ textAlign: "center", color: "#a78bfa", fontSize: 14, fontWeight: 600, padding: "4px 0 12px" }}>
-                <span className="finding-dot">✨ finding more…</span>
-              </div>
-            )}
           </div>
         )}
       </div>
