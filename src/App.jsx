@@ -19,6 +19,7 @@ export default function App() {
   const [hoveredAlreadyRead, setHoveredAlreadyRead] = useState(null);
   const [query, setQuery] = useState("");
   const [dropdown, setDropdown] = useState([]);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [hoveredBook, setHoveredBook] = useState(null);
   const [hoveredCover, setHoveredCover] = useState(null);
   const [hoveredDropdown, setHoveredDropdown] = useState(null);
@@ -70,7 +71,7 @@ export default function App() {
   useEffect(() => {
     const handleClick = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setDropdown([]);
+        setDropdownOpen(false);
         setSelectedIndex(-1);
       }
     };
@@ -129,6 +130,7 @@ export default function App() {
 
     if (filtered.length > 0) {
       setDropdown(filtered.slice(0, 15));
+      setDropdownOpen(true);
       setSelectedIndex(-1);
       setSearching(false);
       clearTimeout(debounceRef.current);
@@ -153,6 +155,7 @@ export default function App() {
             key: b.id,
           }))
         );
+        setDropdownOpen(true);
         setSelectedIndex(-1);
       } catch (err) {
         console.error(err);
@@ -166,6 +169,7 @@ export default function App() {
     if (!myBooks.find((b) => b.key === book.key)) setMyBooks([...myBooks, book]);
     setQuery("");
     setDropdown([]);
+    setDropdownOpen(false);
     setSelectedIndex(-1);
   };
 
@@ -567,18 +571,9 @@ export default function App() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => {
-              if (cachedBooks.length === 0) return;
-              if (query.length === 0) {
+              setDropdownOpen(true);
+              if (dropdown.length === 0 && query.length === 0 && cachedBooks.length > 0) {
                 setDropdown(cachedBooks.slice(0, 15));
-              } else {
-                const filtered = cachedBooks.filter(
-                  (b) =>
-                    b.title.toLowerCase().includes(query.toLowerCase()) ||
-                    b.author.toLowerCase().includes(query.toLowerCase())
-                );
-                if (filtered.length > 0) {
-                  setDropdown(filtered.slice(0, 15));
-                }
               }
             }}
             onKeyDown={(e) => {
@@ -627,7 +622,7 @@ export default function App() {
               searching...
             </div>
           )}
-          {dropdown.length > 0 && (
+          {dropdownOpen && dropdown.length > 0 && (
             <div
               style={{
                 position: "absolute",
