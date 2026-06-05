@@ -93,26 +93,47 @@ export default function App() {
       }
 
       const stillMissing = missing.filter((b) => !stored[b.key]);
-      for (const b of stillMissing) {
-        try {
-          const res = await fetch(
-            `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
-              b.title + " " + b.author
-            )}&maxResults=1&key=${GOOGLE_BOOKS_API_KEY}`
-          );
-          if (!res.ok) continue;
-          const data = await res.json();
-          const img = data.items?.[0]?.volumeInfo?.imageLinks;
-          const cover = (img?.smallThumbnail || img?.thumbnail || null)?.replace(/^http:\/\//, "https://");
-          if (cover) {
-            stored[b.key] = cover;
-            setCachedBooks((prev) =>
-              prev.map((bk) => (bk.key === b.key ? { ...bk, cover } : bk))
-            );
-          }
-        } catch {
-          // skip; placeholder emoji shows
-        }
+
+      // Fetch covers GENTLY: small batches with a pause between them, and bail
+      // out entirely on the first 429 (rate limit). Hammering a rate-limited API
+      // would also starve the user's live search, which matters far more than
+      // backfilling a few cover thumbnails. The real fix is to bake covers into
+      // popularBooks.js via buildPopularBooks.mjs so this loop does nothing.
+      const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+      const BATCH = 5;
+      let rateLimited = false;
+
+      for (let i = 0; i < stillMissing.length && !rateLimited; i += BATCH) {
+        const slice = stillMissing.slice(i, i + BATCH);
+        await Promise.all(
+          slice.map(async (b) => {
+            if (rateLimited) return;
+            try {
+              const res = await fetch(
+                `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
+                  b.title + " " + b.author
+                )}&maxResults=1&key=${GOOGLE_BOOKS_API_KEY}`
+              );
+              if (res.status === 429) {
+                rateLimited = true; // stop the whole backfill
+                return;
+              }
+              if (!res.ok) return;
+              const data = await res.json();
+              const img = data.items?.[0]?.volumeInfo?.imageLinks;
+              const cover = (img?.smallThumbnail || img?.thumbnail || null)?.replace(/^http:\/\//, "https://");
+              if (cover) {
+                stored[b.key] = cover;
+                setCachedBooks((prev) =>
+                  prev.map((bk) => (bk.key === b.key ? { ...bk, cover } : bk))
+                );
+              }
+            } catch {
+              // skip; placeholder emoji shows
+            }
+          })
+        );
+        await sleep(400); // breathe between batches to stay under the rate limit
       }
 
       try {
