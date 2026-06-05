@@ -197,21 +197,8 @@ export default function App() {
       return;
     }
 
-    const filtered = cachedBooks.filter(
-      (b) =>
-        b.title.toLowerCase().includes(query.toLowerCase()) ||
-        b.author.toLowerCase().includes(query.toLowerCase())
-    );
-
-    if (filtered.length > 0) {
-      setDropdown(filtered.slice(0, 15));
-      setDropdownOpen(true);
-      setSelectedIndex(-1);
-      setSearching(false);
-      clearTimeout(debounceRef.current);
-      return;
-    }
-
+    // Always search the live API; cached list is only for fallback if network fails.
+    // Live results have real covers and are prioritized.
     setSearching(true);
     clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(async () => {
@@ -225,19 +212,39 @@ export default function App() {
           { signal: controller.signal }
         );
         const data = await res.json();
-        setDropdown(
-          (data.items || []).map((b) => ({
-            title: b.volumeInfo.title,
-            author: b.volumeInfo.authors?.[0] || "Unknown",
-            cover: b.volumeInfo.imageLinks?.smallThumbnail || null,
-            key: b.id,
-          }))
-        );
+        const results = (data.items || []).map((b) => ({
+          title: b.volumeInfo.title,
+          author: b.volumeInfo.authors?.[0] || "Unknown",
+          cover: b.volumeInfo.imageLinks?.smallThumbnail || null,
+          key: b.id,
+        }));
+
+        // If live search succeeded, use those results (they have real covers).
+        if (results.length > 0) {
+          setDropdown(results);
+        } else {
+          // If API returned nothing, fall back to cached list filtered by query.
+          const fallback = cachedBooks.filter(
+            (b) =>
+              b.title.toLowerCase().includes(query.toLowerCase()) ||
+              b.author.toLowerCase().includes(query.toLowerCase())
+          );
+          setDropdown(fallback.slice(0, 15));
+        }
         setDropdownOpen(true);
         setSelectedIndex(-1);
       } catch (err) {
-        // AbortError is expected when the user hits Stop — ignore it.
-        if (err.name !== "AbortError") console.error(err);
+        // If network fails, fall back to cached list.
+        if (err.name !== "AbortError") {
+          const fallback = cachedBooks.filter(
+            (b) =>
+              b.title.toLowerCase().includes(query.toLowerCase()) ||
+              b.author.toLowerCase().includes(query.toLowerCase())
+          );
+          setDropdown(fallback.slice(0, 15));
+          setDropdownOpen(true);
+          setSelectedIndex(-1);
+        }
       } finally {
         searchAbortRef.current = null;
         setSearching(false);
