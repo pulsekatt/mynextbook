@@ -197,8 +197,20 @@ export default function App() {
       return;
     }
 
-    // Always search the live API; cached list is only for fallback if network fails.
-    // Live results have real covers and are prioritized.
+    // 1. Instant local filter from cached list (these often have covers from enrichment).
+    const cached = cachedBooks.filter(
+      (b) =>
+        b.title.toLowerCase().includes(query.toLowerCase()) ||
+        b.author.toLowerCase().includes(query.toLowerCase())
+    );
+
+    if (cached.length > 0) {
+      setDropdown(cached.slice(0, 15));
+      setDropdownOpen(true);
+      setSelectedIndex(-1);
+    }
+
+    // 2. Simultaneously fetch live results in background to enrich/update dropdown.
     setSearching(true);
     clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(async () => {
@@ -212,39 +224,47 @@ export default function App() {
           { signal: controller.signal }
         );
         const data = await res.json();
-        const results = (data.items || []).map((b) => ({
+        const liveResults = (data.items || []).map((b) => ({
           title: b.volumeInfo.title,
           author: b.volumeInfo.authors?.[0] || "Unknown",
-          cover: b.volumeInfo.imageLinks?.smallThumbnail || null,
+          cover: b.volumeInfo.imageLinks?.smallThumbnail || b.volumeInfo.imageLinks?.thumbnail || null,
           key: b.id,
         }));
 
-        // If live search succeeded, use those results (they have real covers).
-        if (results.length > 0) {
-          setDropdown(results);
-        } else {
-          // If API returned nothing, fall back to cached list filtered by query.
-          const fallback = cachedBooks.filter(
-            (b) =>
-              b.title.toLowerCase().includes(query.toLowerCase()) ||
-              b.author.toLowerCase().includes(query.toLowerCase())
-          );
-          setDropdown(fallback.slice(0, 15));
+        // Merge: prioritize live results with covers, then cached, then live without covers.
+        const seenKeys = new Set();
+        const merged = [];
+
+        // First: live results WITH covers
+        for (const b of liveResults) {
+          if (b.cover && !seenKeys.has(b.key)) {
+            merged.push(b);
+            seenKeys.add(b.key);
+          }
         }
+
+        // Second: cached results (already have enriched covers if available)
+        for (const b of cached) {
+          if (!seenKeys.has(b.key)) {
+            merged.push(b);
+            seenKeys.add(b.key);
+          }
+        }
+
+        // Third: live results WITHOUT covers (fallback)
+        for (const b of liveResults) {
+          if (!b.cover && !seenKeys.has(b.key)) {
+            merged.push(b);
+            seenKeys.add(b.key);
+          }
+        }
+
+        setDropdown(merged.slice(0, 15));
         setDropdownOpen(true);
         setSelectedIndex(-1);
       } catch (err) {
-        // If network fails, fall back to cached list.
-        if (err.name !== "AbortError") {
-          const fallback = cachedBooks.filter(
-            (b) =>
-              b.title.toLowerCase().includes(query.toLowerCase()) ||
-              b.author.toLowerCase().includes(query.toLowerCase())
-          );
-          setDropdown(fallback.slice(0, 15));
-          setDropdownOpen(true);
-          setSelectedIndex(-1);
-        }
+        // AbortError is expected when user hits Stop — ignore it.
+        if (err.name !== "AbortError") console.error(err);
       } finally {
         searchAbortRef.current = null;
         setSearching(false);
