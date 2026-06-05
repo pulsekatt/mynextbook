@@ -227,6 +227,8 @@ export default function App() {
 
       const { recommendations: recs } = await res.json();
 
+      // Pull factual fields (cover, genre, pages, year, rating) from Google Books
+      // — these are real data, unlike anything the model would guess.
       const recsWithCovers = await Promise.all(
         recs.map(async (r) => {
           try {
@@ -236,9 +238,15 @@ export default function App() {
               )}&maxResults=1&key=${GOOGLE_BOOKS_API_KEY}`
             );
             const coverData = await coverRes.json();
-            const cover =
-              coverData.items?.[0]?.volumeInfo?.imageLinks?.thumbnail || null;
-            return { ...r, cover };
+            const info = coverData.items?.[0]?.volumeInfo || {};
+            return {
+              ...r,
+              cover: info.imageLinks?.thumbnail || null,
+              genre: info.categories?.[0] || null,
+              pages: info.pageCount || null,
+              published: info.publishedDate ? String(info.publishedDate).slice(0, 4) : null,
+              rating: info.averageRating || null,
+            };
           } catch {
             return { ...r, cover: null };
           }
@@ -289,6 +297,27 @@ export default function App() {
       </div>
     );
   };
+
+  // A small fact pill for the "More info" panel.
+  const InfoPill = ({ icon, label }) => (
+    <span
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 7,
+        background: "#f0ebff",
+        border: "1px solid #e2d9f3",
+        borderRadius: 99,
+        padding: "6px 14px",
+        fontSize: 13,
+        fontWeight: 600,
+        color: "#6b5fa0",
+      }}
+    >
+      <span>{icon}</span>
+      <span>{label}</span>
+    </span>
+  );
 
   const amazonLink = (title, author) =>
     `https://www.amazon.com/s?k=${encodeURIComponent(title + " " + author)}&tag=${AMAZON_TAG}`;
@@ -927,20 +956,22 @@ export default function App() {
             <h3 style={{ color: "#1e1b4b", marginBottom: 16, fontSize: 20, fontWeight: 800 }}>
               ✨ Your next reads
             </h3>
-            {recommendations.map((r, i) => (
+            {recommendations.map((r, i) => {
+              const hasMoreInfo = r.genre || r.pages || r.published || r.rating;
+              return (
               <div
                 key={r.title + r.author}
                 className={dismissing?.idx === i ? (dismissing.dir === "left" ? "rec-dismissing-left" : "rec-dismissing") : ""}
                 onMouseEnter={() => setHoveredBook(i)}
                 onMouseLeave={() => setHoveredBook(null)}
-                onClick={() => setExpandedRec(expandedRec === i ? null : i)}
+                onClick={() => hasMoreInfo && setExpandedRec(expandedRec === i ? null : i)}
                 style={{
                   background: "white",
                   borderRadius: 18,
                   padding: 22,
                   marginBottom: 16,
                   boxSizing: "border-box",
-                  cursor: "pointer",
+                  cursor: hasMoreInfo ? "pointer" : "default",
                   boxShadow:
                     hoveredBook === i
                       ? "0 14px 32px rgba(124,58,237,0.16)"
@@ -994,7 +1025,7 @@ export default function App() {
                       by {r.author}
                     </div>
                     {renderConfidence(r.confidence)}
-                    <div style={{ color: "#555", fontSize: 16, lineHeight: 1.6 }}>{r.reason}</div>
+                    <div style={{ color: "#555", fontSize: 16, lineHeight: 1.6 }}>{r.details}</div>
                   </div>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
@@ -1022,28 +1053,30 @@ export default function App() {
                   >
                     🛒 Buy on Amazon
                   </a>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setExpandedRec(expandedRec === i ? null : i);
-                    }}
-                    onMouseEnter={() => setHoveredInfo(i)}
-                    onMouseLeave={() => setHoveredInfo(null)}
-                    style={{
-                      padding: "9px 18px",
-                      background: expandedRec === i ? "#7c3aed" : "white",
-                      color: expandedRec === i ? "white" : "#7c3aed",
-                      border: "1.5px solid #7c3aed",
-                      borderRadius: 10,
-                      fontSize: 13,
-                      fontWeight: 700,
-                      cursor: "pointer",
-                      transform: hoveredInfo === i ? "scale(1.08)" : "scale(1)",
-                      transition: "transform 0.3s ease, background 0.2s ease, color 0.2s ease",
-                    }}
-                  >
-                    {expandedRec === i ? "Less info ▴" : "ℹ️ More info ▾"}
-                  </button>
+                  {hasMoreInfo && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setExpandedRec(expandedRec === i ? null : i);
+                      }}
+                      onMouseEnter={() => setHoveredInfo(i)}
+                      onMouseLeave={() => setHoveredInfo(null)}
+                      style={{
+                        padding: "9px 18px",
+                        background: expandedRec === i ? "#7c3aed" : "white",
+                        color: expandedRec === i ? "white" : "#7c3aed",
+                        border: "1.5px solid #7c3aed",
+                        borderRadius: 10,
+                        fontSize: 13,
+                        fontWeight: 700,
+                        cursor: "pointer",
+                        transform: hoveredInfo === i ? "scale(1.08)" : "scale(1)",
+                        transition: "transform 0.3s ease, background 0.2s ease, color 0.2s ease",
+                      }}
+                    >
+                      {expandedRec === i ? "Less info ▴" : "ℹ️ More info ▾"}
+                    </button>
+                  )}
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -1107,55 +1140,21 @@ export default function App() {
                         marginTop: 16,
                         paddingTop: 16,
                         borderTop: "1px dashed #e2d9f3",
+                        display: "flex",
+                        flexWrap: "wrap",
+                        gap: 8,
                       }}
                     >
-                      {r.genre && (
-                        <div style={{ marginBottom: 12 }}>
-                          <span style={{ fontSize: 12, fontWeight: 700, color: "#a78bfa", letterSpacing: 0.5 }}>
-                            GENRE
-                          </span>
-                          <div style={{ fontSize: 15, color: "#1e1b4b", marginTop: 2 }}>{r.genre}</div>
-                        </div>
-                      )}
-                      {r.themes && r.themes.length > 0 && (
-                        <div style={{ marginBottom: 12 }}>
-                          <span style={{ fontSize: 12, fontWeight: 700, color: "#a78bfa", letterSpacing: 0.5 }}>
-                            THEMES
-                          </span>
-                          <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 6 }}>
-                            {r.themes.map((t, ti) => (
-                              <span
-                                key={ti}
-                                style={{
-                                  background: "#f0ebff",
-                                  color: "#6b5fa0",
-                                  fontSize: 12,
-                                  fontWeight: 600,
-                                  padding: "4px 12px",
-                                  borderRadius: 99,
-                                }}
-                              >
-                                {t}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                      {r.details && (
-                        <div>
-                          <span style={{ fontSize: 12, fontWeight: 700, color: "#a78bfa", letterSpacing: 0.5 }}>
-                            WHY THIS PICK
-                          </span>
-                          <div style={{ fontSize: 15, color: "#555", lineHeight: 1.6, marginTop: 4 }}>
-                            {r.details}
-                          </div>
-                        </div>
-                      )}
+                      {r.genre && <InfoPill icon="📚" label={r.genre} />}
+                      {r.pages && <InfoPill icon="📄" label={`${r.pages} pages`} />}
+                      {r.published && <InfoPill icon="📅" label={r.published} />}
+                      {r.rating && <InfoPill icon="⭐" label={`${r.rating} / 5`} />}
                     </div>
                   </div>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
