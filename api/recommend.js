@@ -1,79 +1,88 @@
 // api/recommend.js
-// Vercel serverless function. Runs on the server, so GEMINI_API_KEY is never
-// shipped to the browser. The client POSTs { myBooks, notInterested } here.
+// Streaming version. Server calls Gemini's streaming endpoint, pulls each
+// COMPLETE book object out of the partial JSON as it arrives, and forwards it
+// to the browser as a Server-Sent Event so the UI can render books one-by-one.
 //
-// Reliability strategy:
-//   1. Try the primary model, retrying a couple times on transient errors.
-//   2. If the primary model is still overloaded (503), fall back to a second,
-//      less-contended model and try that too.
-//   3. Only fail if BOTH models are unavailable.
+// Reliability: retry + fallback model applies to OPENING the stream. Once the
+// stream is flowing we commit to it (you can't cleanly retry mid-stream).
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-
-// Primary first, fallback second. 2.5-flash is older/less busy, so it usually
-// answers when 3.5-flash is slammed. Both are fine for this task.
 const MODELS = ["gemini-3.5-flash", "gemini-2.5-flash"];
 
-// Call ONE model, retrying on transient errors (503 overloaded, 429 rate-limited,
-// 500 server error). Returns the parsed response, or throws with .status set.
-async function callModel(model, body, apiKey, maxAttempts = 2) {
+// Open a streaming connection to one model. Retries on transient errors.
+async function openStream(model, body, apiKey, maxAttempts = 2) {
   let lastDetail = "";
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     const resp = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+      `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse`,
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-goog-api-key": apiKey,
-        },
+        headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
         body: JSON.stringify(body),
       }
     );
+    if (resp.ok && resp.body) return resp;
 
-    if (resp.ok) return resp;
-
-    lastDetail = await resp.text();
+    lastDetail = await resp.text().catch(() => "");
     const transient = [429, 500, 503].includes(resp.status);
-
     if (!transient || attempt === maxAttempts) {
       const err = new Error(`${model} -> ${resp.status}`);
       err.status = resp.status;
       err.detail = lastDetail;
       throw err;
     }
-
-    const wait = 500 * attempt; // 500ms, then 1000ms
-    console.warn(`${model} returned ${resp.status}, retrying in ${wait}ms (attempt ${attempt}/${maxAttempts})`);
-    await sleep(wait);
+    await sleep(500 * attempt);
   }
 }
 
-// Try each model in order. Move to the next model only on transient errors;
-// for a real error (bad request, bad key) stop immediately — fallback won't help.
-async function getGeminiResponse(body, apiKey) {
+// Try each model in order; fall back only on transient errors.
+async function openStreamWithFallback(body, apiKey) {
   let lastErr;
   for (const model of MODELS) {
     try {
-      const resp = await callModel(model, body, apiKey);
-      if (model !== MODELS[0]) {
-        console.warn(`Primary model busy; served from fallback model ${model}`);
-      }
-      return resp;
+      return await openStream(model, body, apiKey);
     } catch (err) {
       lastErr = err;
-      const transient = [429, 500, 503].includes(err.status);
-      if (!transient) throw err; // non-transient: don't bother with fallback
+      if (![429, 500, 503].includes(err.status)) throw err;
       console.warn(`${model} unavailable (${err.status}); trying next model`);
     }
   }
-  throw lastErr; // all models exhausted
+  throw lastErr;
+}
+
+// Pulls complete top-level {...} objects out of a growing buffer, once each.
+function makeExtractor() {
+  let consumed = 0;
+  return function extract(buffer) {
+    const out = [];
+    let i = consumed;
+    while (i < buffer.length) {
+      while (i < buffer.length && buffer[i] !== "{") i++;
+      if (i >= buffer.length) break;
+      let depth = 0, inStr = false, esc = false, end = -1;
+      for (let j = i; j < buffer.length; j++) {
+        const c = buffer[j];
+        if (inStr) {
+          if (esc) esc = false;
+          else if (c === "\\") esc = true;
+          else if (c === '"') inStr = false;
+        } else {
+          if (c === '"') inStr = true;
+          else if (c === "{") depth++;
+          else if (c === "}") { depth--; if (depth === 0) { end = j; break; } }
+        }
+      }
+      if (end === -1) break;
+      try { out.push(JSON.parse(buffer.slice(i, end + 1))); } catch { break; }
+      consumed = end + 1;
+      i = end + 1;
+    }
+    return out;
+  };
 }
 
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
+  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
@@ -81,56 +90,85 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: "Server misconfigured" });
   }
 
+  const { myBooks = [], notInterested = [] } = req.body || {};
+  if (!Array.isArray(myBooks) || myBooks.length === 0) {
+    return res.status(400).json({ error: "No books provided" });
+  }
+
+  const bookList = myBooks.map((b) => `"${b.title}" by ${b.author}`).join(", ");
+  const excludeList = notInterested.map((b) => `"${b.title}" by ${b.author}`).join(", ");
+  const excludeClause = excludeList
+    ? ` Do NOT recommend any of these books (I'm not interested in them): ${excludeList}.`
+    : "";
+
+  // Note: ask for most-confident-first so arrival order = display order (no client sort needed while streaming).
+  const prompt = `Based on these books I've read: ${bookList}.${excludeClause} Recommend 5 new books I'd enjoy, ordered from most to least confident match. Respond ONLY in JSON array format like this, no other text: [{"title":"Book Title","author":"Author Name","reason":"One sentence why I'd like it","confidence":92,"genre":"Primary genre","themes":["theme1","theme2","theme3"],"details":"A 2-3 sentence deeper explanation of why this book matches the reader's taste, referencing what they've read and what they'll get from it."}]. The confidence field should be a number from 70-99. The themes array should contain 2-4 short theme/topic tags.`;
+
+  let geminiRes;
   try {
-    const { myBooks = [], notInterested = [] } = req.body || {};
-
-    if (!Array.isArray(myBooks) || myBooks.length === 0) {
-      return res.status(400).json({ error: "No books provided" });
-    }
-
-    const bookList = myBooks
-      .map((b) => `"${b.title}" by ${b.author}`)
-      .join(", ");
-    const excludeList = notInterested
-      .map((b) => `"${b.title}" by ${b.author}`)
-      .join(", ");
-    const excludeClause = excludeList
-      ? ` Do NOT recommend any of these books (I'm not interested in them): ${excludeList}.`
-      : "";
-
-    const prompt = `Based on these books I've read: ${bookList}.${excludeClause} Recommend 5 new books I'd enjoy. Respond ONLY in JSON array format like this, no other text: [{"title":"Book Title","author":"Author Name","reason":"One sentence why I'd like it","confidence":92,"genre":"Primary genre","themes":["theme1","theme2","theme3"],"details":"A 2-3 sentence deeper explanation of why this book matches the reader's taste, referencing what they've read and what they'll get from it."}]. The confidence field should be a number from 70-99 representing how confident you are this book matches the reader's taste. The themes array should contain 2-4 short theme/topic tags.`;
-
-    let geminiRes;
-    try {
-      geminiRes = await getGeminiResponse(
-        { contents: [{ parts: [{ text: prompt }] }] },
-        apiKey
-      );
-    } catch (err) {
-      console.error("Gemini API error:", err.status, err.detail);
-      if (err.status === 503 || err.status === 429) {
-        return res
-          .status(503)
-          .json({ error: "The recommendation models are busy right now. Please try again in a moment." });
-      }
-      return res.status(502).json({ error: "Recommendation service failed" });
-    }
-
-    const data = await geminiRes.json();
-    let text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-    text = text.replace(/```json|```/g, "").trim();
-
-    let recommendations;
-    try {
-      recommendations = JSON.parse(text);
-    } catch {
-      console.error("Could not parse Gemini output:", text);
-      return res.status(502).json({ error: "Could not parse recommendations" });
-    }
-
-    return res.status(200).json({ recommendations });
+    geminiRes = await openStreamWithFallback(
+      { contents: [{ parts: [{ text: prompt }] }] },
+      apiKey
+    );
   } catch (err) {
-    console.error("Handler error:", err);
-    return res.status(500).json({ error: "Something went wrong" });
+    console.error("Gemini API error:", err.status, err.detail);
+    const busy = err.status === 503 || err.status === 429;
+    return res
+      .status(busy ? 503 : 502)
+      .json({ error: busy ? "The recommendation models are busy right now. Please try again in a moment." : "Recommendation service failed" });
+  }
+
+  // Switch the response into Server-Sent Events mode and stream books out.
+  res.writeHead(200, {
+    "Content-Type": "text/event-stream; charset=utf-8",
+    "Cache-Control": "no-cache, no-transform",
+    Connection: "keep-alive",
+  });
+  const send = (obj) => res.write(`data: ${JSON.stringify(obj)}\n\n`);
+
+  try {
+    const reader = geminiRes.body.getReader();
+    const decoder = new TextDecoder();
+    const extract = makeExtractor();
+    let sseBuf = "";   // raw SSE lines from Gemini
+    let textBuf = "";  // accumulated model text (the JSON array)
+    let count = 0;
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      sseBuf += decoder.decode(value, { stream: true });
+
+      // Gemini SSE: events are "data: {...}" separated by blank lines.
+      let nl;
+      while ((nl = sseBuf.indexOf("\n")) !== -1) {
+        const line = sseBuf.slice(0, nl).trim();
+        sseBuf = sseBuf.slice(nl + 1);
+        if (!line.startsWith("data:")) continue;
+        const payload = line.slice(5).trim();
+        if (payload === "[DONE]") continue;
+        let chunk;
+        try { chunk = JSON.parse(payload); } catch { continue; }
+        const piece = chunk.candidates?.[0]?.content?.parts?.[0]?.text || "";
+        if (!piece) continue;
+        textBuf += piece;
+
+        // Any newly-complete book objects? Send them on.
+        for (const book of extract(textBuf)) {
+          send({ type: "book", book });
+          count++;
+        }
+      }
+    }
+
+    if (count === 0) {
+      send({ type: "error", error: "No recommendations were generated." });
+    }
+    send({ type: "done", count });
+    res.end();
+  } catch (err) {
+    console.error("Stream error:", err);
+    send({ type: "error", error: "Stream interrupted." });
+    res.end();
   }
 }
