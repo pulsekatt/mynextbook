@@ -982,7 +982,7 @@ export default function App() {
               animation: "homeFadeIn 0.5s ease-out both",
             }}
           >
-            <span style={{ fontSize: 14 }}>🏠</span>
+            <span style={{ fontSize: 12 }}>🏠</span>
             <span className="home-label">Home</span>
           </button>
         )}
