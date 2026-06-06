@@ -1772,9 +1772,22 @@ export default function App() {
               </div>
               );
             })}
+          </div>
+        )}
 
-            {/* Thank-you + share — shown under the recommendation list. Only
-                appears when not mid-dismiss-animation so it doesn't jump. */}
+        {/* Thank-you + share — placed at the VERY BOTTOM (order: 4), below the
+            sticky controls region / "Find more books" button (order: 3). Only
+            rendered once recommendations exist. */}
+        {recommendations.length > 0 && (
+          <div
+            className="share-card-wrap"
+            style={{
+              order: 4,
+              width: "min(960px, 92vw)",
+              marginLeft: "calc(50% - min(480px, 46vw))",
+              marginTop: 28,
+            }}
+          >
             <div
               className="share-card"
               style={{
@@ -1782,7 +1795,6 @@ export default function App() {
                 border: "1px solid #e2d9f3",
                 borderRadius: 18,
                 padding: "26px 22px",
-                marginTop: 8,
                 textAlign: "center",
               }}
             >
