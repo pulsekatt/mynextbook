@@ -1099,10 +1099,16 @@ export default function App() {
               : { order: 0 }
           }
         >
-        {/* Search */}
+        {/* Search — hidden while loading so the loading view stands alone. */}
         <div
           className="search-wrap"
-          style={{ position: "relative", marginBottom: collapsed ? 0 : 10, width: "min(960px, 92vw)", marginLeft: "calc(50% - min(480px, 46vw))" }}
+          style={{
+            position: "relative",
+            marginBottom: collapsed ? 0 : 10,
+            width: "min(960px, 92vw)",
+            marginLeft: "calc(50% - min(480px, 46vw))",
+            display: loading ? "none" : undefined,
+          }}
           ref={dropdownRef}
         >
           {!collapsed && (
