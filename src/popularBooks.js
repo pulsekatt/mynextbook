@@ -33,13 +33,13 @@ const POPULAR_BOOKS = [
   {
     "title": "Don Quixote",
     "author": "Miguel de Cervantes",
-    "cover": null,
+    "cover": "https://books.google.com/books/content?id=zzP-DwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
     "key": "pop-don-quixote-miguel-de-cervantes"
   },
   {
     "title": "The Count of Monte Cristo",
     "author": "Alexandre Dumas",
-    "cover": null,
+    "cover": "https://books.google.com/books/content?id=LJbWDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
     "key": "pop-the-count-of-monte-cristo-alexandre-dumas"
   },
   {
@@ -63,7 +63,7 @@ const POPULAR_BOOKS = [
   {
     "title": "Emma",
     "author": "Jane Austen",
-    "cover": null,
+    "cover": "https://books.google.com/books/content?id=9fwhtAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
     "key": "pop-emma-jane-austen"
   },
   {
@@ -87,7 +87,7 @@ const POPULAR_BOOKS = [
   {
     "title": "The Great Gatsby",
     "author": "F. Scott Fitzgerald",
-    "cover": null,
+    "cover": "https://books.google.com/books/content?id=8dyXzQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
     "key": "pop-the-great-gatsby-f-scott-fitzgerald"
   },
   {
@@ -141,7 +141,7 @@ const POPULAR_BOOKS = [
   {
     "title": "Moby-Dick",
     "author": "Herman Melville",
-    "cover": null,
+    "cover": "https://books.google.com/books/content?id=7H0d6I96AM8C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
     "key": "pop-moby-dick-herman-melville"
   },
   {
@@ -159,7 +159,7 @@ const POPULAR_BOOKS = [
   {
     "title": "Crime and Punishment",
     "author": "Fyodor Dostoevsky",
-    "cover": null,
+    "cover": "https://books.google.com/books/content?id=0HZrq-4zA5QC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
     "key": "pop-crime-and-punishment-fyodor-dostoevsky"
   },
   {
@@ -249,7 +249,7 @@ const POPULAR_BOOKS = [
   {
     "title": "Lord of the Flies",
     "author": "William Golding",
-    "cover": null,
+    "cover": "https://books.google.com/books/content?id=iyfgqV5dxXQC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
     "key": "pop-lord-of-the-flies-william-golding"
   },
   {
@@ -363,7 +363,7 @@ const POPULAR_BOOKS = [
   {
     "title": "Harry Potter and the Prisoner of Azkaban",
     "author": "J.K. Rowling",
-    "cover": null,
+    "cover": "https://books.google.com/books/content?id=f6Fi0QEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
     "key": "pop-harry-potter-and-the-prisoner-of-azkaban-j-k-rowling"
   },
   {
@@ -783,7 +783,7 @@ const POPULAR_BOOKS = [
   {
     "title": "Mockingjay",
     "author": "Suzanne Collins",
-    "cover": null,
+    "cover": "https://books.google.com/books/content?id=fNDO0AEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
     "key": "pop-mockingjay-suzanne-collins"
   },
   {
@@ -819,7 +819,7 @@ const POPULAR_BOOKS = [
   {
     "title": "Looking for Alaska",
     "author": "John Green",
-    "cover": null,
+    "cover": "https://books.google.com/books/content?id=EWEkAQAAMAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
     "key": "pop-looking-for-alaska-john-green"
   },
   {
@@ -1161,7 +1161,7 @@ const POPULAR_BOOKS = [
   {
     "title": "The Power of Positive Thinking",
     "author": "Norman Vincent Peale",
-    "cover": null,
+    "cover": "https://books.google.com/books/content?id=NGSHH1kiWYgC&printsec=frontcover&img=1&zoom=1&source=gbs_api",
     "key": "pop-the-power-of-positive-thinking-norman-vincent-peale"
   },
   {
@@ -1187,6 +1187,1470 @@ const POPULAR_BOOKS = [
     "author": "Robert Greene",
     "cover": "https://books.google.com/books/content?id=afCxg5sogvAC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
     "key": "pop-the-48-laws-of-power-robert-greene"
+  },
+  {
+    "title": "Lessons in Chemistry",
+    "author": "Bonnie Garmus",
+    "cover": "https://books.google.com/books/content?id=Ayk3EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-lessons-in-chemistry-bonnie-garmus"
+  },
+  {
+    "title": "Tomorrow, and Tomorrow, and Tomorrow",
+    "author": "Gabrielle Zevin",
+    "cover": "https://books.google.com/books/content?id=uW_8EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-tomorrow-and-tomorrow-and-tomorrow-gabrielle-zevin"
+  },
+  {
+    "title": "Demon Copperhead",
+    "author": "Barbara Kingsolver",
+    "cover": "https://books.google.com/books/content?id=bMxZEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-demon-copperhead-barbara-kingsolver"
+  },
+  {
+    "title": "The Covenant of Water",
+    "author": "Abraham Verghese",
+    "cover": "https://books.google.com/books/content?id=8kidEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-covenant-of-water-abraham-verghese"
+  },
+  {
+    "title": "Trust",
+    "author": "Hernan Diaz",
+    "cover": "https://books.google.com/books/content?id=QyiwEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-trust-hernan-diaz"
+  },
+  {
+    "title": "The Lincoln Highway",
+    "author": "Amor Towles",
+    "cover": "https://books.google.com/books/content?id=f5GOEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-the-lincoln-highway-amor-towles"
+  },
+  {
+    "title": "A Gentleman in Moscow",
+    "author": "Amor Towles",
+    "cover": "https://books.google.com/books/content?id=f6txCwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-a-gentleman-in-moscow-amor-towles"
+  },
+  {
+    "title": "The Overstory",
+    "author": "Richard Powers",
+    "cover": "https://books.google.com/books/content?id=_zQsDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-overstory-richard-powers"
+  },
+  {
+    "title": "Pachinko",
+    "author": "Min Jin Lee",
+    "cover": "https://books.google.com/books/content?id=LbOfEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-pachinko-min-jin-lee"
+  },
+  {
+    "title": "Little Fires Everywhere",
+    "author": "Celeste Ng",
+    "cover": "https://books.google.com/books/content?id=OsUPDgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-little-fires-everywhere-celeste-ng"
+  },
+  {
+    "title": "Everything I Never Told You",
+    "author": "Celeste Ng",
+    "cover": "https://books.google.com/books/content?id=StVJAgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-everything-i-never-told-you-celeste-ng"
+  },
+  {
+    "title": "The Vanishing Half",
+    "author": "Brit Bennett",
+    "cover": "https://books.google.com/books/content?id=gxGuDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-vanishing-half-brit-bennett"
+  },
+  {
+    "title": "An American Marriage",
+    "author": "Tayari Jones",
+    "cover": "https://books.google.com/books/content?id=UW14EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-an-american-marriage-tayari-jones"
+  },
+  {
+    "title": "The Nightingale",
+    "author": "Kristin Hannah",
+    "cover": "https://books.google.com/books/content?id=ZNyIBAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-nightingale-kristin-hannah"
+  },
+  {
+    "title": "The Four Winds",
+    "author": "Kristin Hannah",
+    "cover": "https://books.google.com/books/content?id=Vw_hDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-four-winds-kristin-hannah"
+  },
+  {
+    "title": "The Great Alone",
+    "author": "Kristin Hannah",
+    "cover": "https://books.google.com/books/content?id=5N4PwQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-the-great-alone-kristin-hannah"
+  },
+  {
+    "title": "All the Light We Cannot See",
+    "author": "Anthony Doerr",
+    "cover": "https://books.google.com/books/content?id=_AZ_AwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-all-the-light-we-cannot-see-anthony-doerr"
+  },
+  {
+    "title": "The Underground Railroad",
+    "author": "Colson Whitehead",
+    "cover": "https://books.google.com/books/content?id=MepRCwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-underground-railroad-colson-whitehead"
+  },
+  {
+    "title": "The Nickel Boys",
+    "author": "Colson Whitehead",
+    "cover": "https://books.google.com/books/content?id=WUmNEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-the-nickel-boys-colson-whitehead"
+  },
+  {
+    "title": "Hamnet",
+    "author": "Maggie O'Farrell",
+    "cover": "https://books.google.com/books/content?id=_kW5DwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-hamnet-maggie-o-farrell"
+  },
+  {
+    "title": "The Dutch House",
+    "author": "Ann Patchett",
+    "cover": "https://books.google.com/books/content?id=FUMIEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-dutch-house-ann-patchett"
+  },
+  {
+    "title": "Bel Canto",
+    "author": "Ann Patchett",
+    "cover": "https://books.google.com/books/content?id=mDURpw3IjOIC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-bel-canto-ann-patchett"
+  },
+  {
+    "title": "The Sympathizer",
+    "author": "Viet Thanh Nguyen",
+    "cover": "https://books.google.com/books/content?id=-u0aswEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-the-sympathizer-viet-thanh-nguyen"
+  },
+  {
+    "title": "A Brief History of Seven Killings",
+    "author": "Marlon James",
+    "cover": "https://books.google.com/books/content?id=XR90AwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-a-brief-history-of-seven-killings-marlon-james"
+  },
+  {
+    "title": "Shuggie Bain",
+    "author": "Douglas Stuart",
+    "cover": "https://books.google.com/books/content?id=UZCrDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-shuggie-bain-douglas-stuart"
+  },
+  {
+    "title": "The Seven Moons of Maali Almeida",
+    "author": "Shehan Karunatilaka",
+    "cover": "https://books.google.com/books/content?id=oaxQzwEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-the-seven-moons-of-maali-almeida-shehan-karunatilaka"
+  },
+  {
+    "title": "Prophet Song",
+    "author": "Paul Lynch",
+    "cover": "https://books.google.com/books/content?id=zSfAEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-prophet-song-paul-lynch"
+  },
+  {
+    "title": "The Bee Sting",
+    "author": "Paul Murray",
+    "cover": "https://books.google.com/books/content?id=QJmDEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-bee-sting-paul-murray"
+  },
+  {
+    "title": "Yellowface",
+    "author": "R.F. Kuang",
+    "cover": "https://books.google.com/books/content?id=iJPhEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-yellowface-r-f-kuang"
+  },
+  {
+    "title": "Babel",
+    "author": "R.F. Kuang",
+    "cover": "https://books.google.com/books/content?id=YMpQEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-babel-r-f-kuang"
+  },
+  {
+    "title": "The Thursday Murder Club",
+    "author": "Richard Osman",
+    "cover": "https://books.google.com/books/content?id=q7yZDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-thursday-murder-club-richard-osman"
+  },
+  {
+    "title": "The Man Who Died Twice",
+    "author": "Richard Osman",
+    "cover": "https://books.google.com/books/content?id=WSAjEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-the-man-who-died-twice-richard-osman"
+  },
+  {
+    "title": "Anxious People",
+    "author": "Fredrik Backman",
+    "cover": "https://books.google.com/books/content?id=PMr2DwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-anxious-people-fredrik-backman"
+  },
+  {
+    "title": "A Man Called Ove",
+    "author": "Fredrik Backman",
+    "cover": "https://books.google.com/books/content?id=7mtNAgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-a-man-called-ove-fredrik-backman"
+  },
+  {
+    "title": "Beartown",
+    "author": "Fredrik Backman",
+    "cover": "https://books.google.com/books/content?id=SJGxDgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-beartown-fredrik-backman"
+  },
+  {
+    "title": "The Maid",
+    "author": "Nita Prose",
+    "cover": "https://books.google.com/books/content?id=Dc0nEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-maid-nita-prose"
+  },
+  {
+    "title": "Eleanor Oliphant Is Completely Fine",
+    "author": "Gail Honeyman",
+    "cover": "https://books.google.com/books/content?id=_ZLZDAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-eleanor-oliphant-is-completely-fine-gail-honeyman"
+  },
+  {
+    "title": "The Humans",
+    "author": "Matt Haig",
+    "cover": "https://books.google.com/books/content?id=OwA7BAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-humans-matt-haig"
+  },
+  {
+    "title": "Cloud Cuckoo Land",
+    "author": "Anthony Doerr",
+    "cover": "https://books.google.com/books/content?id=1VNFEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-cloud-cuckoo-land-anthony-doerr"
+  },
+  {
+    "title": "Sea of Tranquility",
+    "author": "Emily St. John Mandel",
+    "cover": "https://books.google.com/books/content?id=fj84EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-sea-of-tranquility-emily-st-john-mandel"
+  },
+  {
+    "title": "Station Eleven",
+    "author": "Emily St. John Mandel",
+    "cover": "https://books.google.com/books/content?id=lRGPEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-station-eleven-emily-st-john-mandel"
+  },
+  {
+    "title": "The Glass Hotel",
+    "author": "Emily St. John Mandel",
+    "cover": "https://books.google.com/books/content?id=Nn-WDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-glass-hotel-emily-st-john-mandel"
+  },
+  {
+    "title": "It Starts with Us",
+    "author": "Colleen Hoover",
+    "cover": "https://books.google.com/books/content?id=okVdEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-it-starts-with-us-colleen-hoover"
+  },
+  {
+    "title": "Ugly Love",
+    "author": "Colleen Hoover",
+    "cover": "https://books.google.com/books/content?id=QF1GAwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-ugly-love-colleen-hoover"
+  },
+  {
+    "title": "November 9",
+    "author": "Colleen Hoover",
+    "cover": "https://books.google.com/books/content?id=R9_cCgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-november-9-colleen-hoover"
+  },
+  {
+    "title": "Reminders of Him",
+    "author": "Colleen Hoover",
+    "cover": "https://books.google.com/books/content?id=Fzy1zgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-reminders-of-him-colleen-hoover"
+  },
+  {
+    "title": "Fourth Wing",
+    "author": "Rebecca Yarros",
+    "cover": "https://books.google.com/books/content?id=E-OLEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-fourth-wing-rebecca-yarros"
+  },
+  {
+    "title": "Iron Flame",
+    "author": "Rebecca Yarros",
+    "cover": "https://books.google.com/books/content?id=hEKjEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-iron-flame-rebecca-yarros"
+  },
+  {
+    "title": "A Court of Thorns and Roses",
+    "author": "Sarah J. Maas",
+    "cover": "https://books.google.com/books/content?id=GynbBQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-a-court-of-thorns-and-roses-sarah-j-maas"
+  },
+  {
+    "title": "A Court of Mist and Fury",
+    "author": "Sarah J. Maas",
+    "cover": "https://books.google.com/books/content?id=LtEkCwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-a-court-of-mist-and-fury-sarah-j-maas"
+  },
+  {
+    "title": "A Court of Wings and Ruin",
+    "author": "Sarah J. Maas",
+    "cover": "https://books.google.com/books/content?id=9pQQDQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-a-court-of-wings-and-ruin-sarah-j-maas"
+  },
+  {
+    "title": "A Court of Silver Flames",
+    "author": "Sarah J. Maas",
+    "cover": "https://books.google.com/books/content?id=97FmEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-a-court-of-silver-flames-sarah-j-maas"
+  },
+  {
+    "title": "House of Earth and Blood",
+    "author": "Sarah J. Maas",
+    "cover": "https://books.google.com/books/content?id=LUmQDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-house-of-earth-and-blood-sarah-j-maas"
+  },
+  {
+    "title": "Throne of Glass",
+    "author": "Sarah J. Maas",
+    "cover": "https://books.google.com/books/content?id=mezhxQ0twPUC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-throne-of-glass-sarah-j-maas"
+  },
+  {
+    "title": "The Love Hypothesis",
+    "author": "Ali Hazelwood",
+    "cover": "https://books.google.com/books/content?id=J4QUEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-love-hypothesis-ali-hazelwood"
+  },
+  {
+    "title": "Love on the Brain",
+    "author": "Ali Hazelwood",
+    "cover": "https://books.google.com/books/content?id=kahXEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-love-on-the-brain-ali-hazelwood"
+  },
+  {
+    "title": "Beach Read",
+    "author": "Emily Henry",
+    "cover": "https://books.google.com/books/content?id=lxGuDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-beach-read-emily-henry"
+  },
+  {
+    "title": "People We Meet on Vacation",
+    "author": "Emily Henry",
+    "cover": "https://books.google.com/books/content?id=xWNjEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-people-we-meet-on-vacation-emily-henry"
+  },
+  {
+    "title": "Book Lovers",
+    "author": "Emily Henry",
+    "cover": "https://books.google.com/books/content?id=ht7EEQAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-book-lovers-emily-henry"
+  },
+  {
+    "title": "Happy Place",
+    "author": "Emily Henry",
+    "cover": "https://books.google.com/books/content?id=-Wd9EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-happy-place-emily-henry"
+  },
+  {
+    "title": "Funny Story",
+    "author": "Emily Henry",
+    "cover": "https://books.google.com/books/content?id=qU0tEQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-funny-story-emily-henry"
+  },
+  {
+    "title": "The Spanish Love Deception",
+    "author": "Elena Armas",
+    "cover": "https://books.google.com/books/content?id=a6VXEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-spanish-love-deception-elena-armas"
+  },
+  {
+    "title": "Icebreaker",
+    "author": "Hannah Grace",
+    "cover": "https://books.google.com/books/content?id=QvGcEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-icebreaker-hannah-grace"
+  },
+  {
+    "title": "The Hating Game",
+    "author": "Sally Thorne",
+    "cover": "https://books.google.com/books/content?id=Ap5qjgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-the-hating-game-sally-thorne"
+  },
+  {
+    "title": "Red, White & Royal Blue",
+    "author": "Casey McQuiston",
+    "cover": "https://books.google.com/books/content?id=1I1xDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-red-white-royal-blue-casey-mcquiston"
+  },
+  {
+    "title": "One Last Stop",
+    "author": "Casey McQuiston",
+    "cover": "https://books.google.com/books/content?id=EdP3DwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-one-last-stop-casey-mcquiston"
+  },
+  {
+    "title": "Daisy Jones & The Six",
+    "author": "Taylor Jenkins Reid",
+    "cover": "https://books.google.com/books/content?id=VJZWEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-daisy-jones-the-six-taylor-jenkins-reid"
+  },
+  {
+    "title": "Malibu Rising",
+    "author": "Taylor Jenkins Reid",
+    "cover": "https://books.google.com/books/content?id=aJWJzQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-malibu-rising-taylor-jenkins-reid"
+  },
+  {
+    "title": "Carrie Soto Is Back",
+    "author": "Taylor Jenkins Reid",
+    "cover": "https://books.google.com/books/content?id=75RfEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-carrie-soto-is-back-taylor-jenkins-reid"
+  },
+  {
+    "title": "The Cruel Prince",
+    "author": "Holly Black",
+    "cover": "https://books.google.com/books/content?id=WFAsDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-cruel-prince-holly-black"
+  },
+  {
+    "title": "The Wicked King",
+    "author": "Holly Black",
+    "cover": "https://books.google.com/books/content?id=ZqpPDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-wicked-king-holly-black"
+  },
+  {
+    "title": "Twisted Love",
+    "author": "Ana Huang",
+    "cover": "https://books.google.com/books/content?id=i3jmEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-twisted-love-ana-huang"
+  },
+  {
+    "title": "Haunting Adeline",
+    "author": "H.D. Carlton",
+    "cover": "https://books.google.com/books/content?id=yEHl0AEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-haunting-adeline-h-d-carlton"
+  },
+  {
+    "title": "The Master and Margarita",
+    "author": "Mikhail Bulgakov",
+    "cover": "https://books.google.com/books/content?id=ZJ38DwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-master-and-margarita-mikhail-bulgakov"
+  },
+  {
+    "title": "Doctor Zhivago",
+    "author": "Boris Pasternak",
+    "cover": "https://books.google.com/books/content?id=GInyXwAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-doctor-zhivago-boris-pasternak"
+  },
+  {
+    "title": "Notes from Underground",
+    "author": "Fyodor Dostoevsky",
+    "cover": "https://books.google.com/books/content?id=_Ns7PgAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-notes-from-underground-fyodor-dostoevsky"
+  },
+  {
+    "title": "The Idiot",
+    "author": "Fyodor Dostoevsky",
+    "cover": "https://books.google.com/books/content?id=5fyuj9x9UZIC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-idiot-fyodor-dostoevsky"
+  },
+  {
+    "title": "Fathers and Sons",
+    "author": "Ivan Turgenev",
+    "cover": "https://books.google.com/books/content?id=ImGtcvRUkH0C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-fathers-and-sons-ivan-turgenev"
+  },
+  {
+    "title": "Dead Souls",
+    "author": "Nikolai Gogol",
+    "cover": "https://books.google.com/books/content?id=GwKP0QEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-dead-souls-nikolai-gogol"
+  },
+  {
+    "title": "Madame Bovary",
+    "author": "Gustave Flaubert",
+    "cover": "https://books.google.com/books/content?id=K3kQDgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-madame-bovary-gustave-flaubert"
+  },
+  {
+    "title": "The Red and the Black",
+    "author": "Stendhal",
+    "cover": "https://books.google.com/books/content?id=bJU80AEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-the-red-and-the-black-stendhal"
+  },
+  {
+    "title": "Germinal",
+    "author": "Émile Zola",
+    "cover": "https://books.google.com/books/content?id=1ZohEQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-germinal-mile-zola"
+  },
+  {
+    "title": "Candide",
+    "author": "Voltaire",
+    "cover": "https://books.google.com/books/content?id=aB0xMQAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-candide-voltaire"
+  },
+  {
+    "title": "The Plague",
+    "author": "Albert Camus",
+    "cover": "https://books.google.com/books/content?id=8W70AQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-plague-albert-camus"
+  },
+  {
+    "title": "The Fall",
+    "author": "Albert Camus",
+    "cover": "https://books.google.com/books/content?id=SU9lAAAAMAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-the-fall-albert-camus"
+  },
+  {
+    "title": "Nausea",
+    "author": "Jean-Paul Sartre",
+    "cover": "https://books.google.com/books/content?id=mxH354gAqQMC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-nausea-jean-paul-sartre"
+  },
+  {
+    "title": "The Tin Drum",
+    "author": "Günter Grass",
+    "cover": "https://books.google.com/books/content?id=WAO8vQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-the-tin-drum-g-nter-grass"
+  },
+  {
+    "title": "Death in Venice",
+    "author": "Thomas Mann",
+    "cover": "https://books.google.com/books/content?id=PjbCAgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-death-in-venice-thomas-mann"
+  },
+  {
+    "title": "The Magic Mountain",
+    "author": "Thomas Mann",
+    "cover": "https://books.google.com/books/content?id=tChcAAAAMAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-the-magic-mountain-thomas-mann"
+  },
+  {
+    "title": "Buddenbrooks",
+    "author": "Thomas Mann",
+    "cover": "https://books.google.com/books/content?id=pBLCDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-buddenbrooks-thomas-mann"
+  },
+  {
+    "title": "The Name of the Rose",
+    "author": "Umberto Eco",
+    "cover": "https://books.google.com/books/content?id=KAgbmUnR2EQC&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-the-name-of-the-rose-umberto-eco"
+  },
+  {
+    "title": "If on a Winter's Night a Traveler",
+    "author": "Italo Calvino",
+    "cover": "https://books.google.com/books/content?id=mKBOehKRx1kC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-if-on-a-winter-s-night-a-traveler-italo-calvino"
+  },
+  {
+    "title": "The Leopard",
+    "author": "Giuseppe Tomasi di Lampedusa",
+    "cover": "https://books.google.com/books/content?id=JVTiiF-5zCAC&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-the-leopard-giuseppe-tomasi-di-lampedusa"
+  },
+  {
+    "title": "My Brilliant Friend",
+    "author": "Elena Ferrante",
+    "cover": "https://books.google.com/books/content?id=mLTRDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-my-brilliant-friend-elena-ferrante"
+  },
+  {
+    "title": "The Story of a New Name",
+    "author": "Elena Ferrante",
+    "cover": "https://books.google.com/books/content?id=hrTRDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-story-of-a-new-name-elena-ferrante"
+  },
+  {
+    "title": "The Shadow of the Wind",
+    "author": "Carlos Ruiz Zafón",
+    "cover": "https://books.google.com/books/content?id=CkSVQAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-the-shadow-of-the-wind-carlos-ruiz-zaf-n"
+  },
+  {
+    "title": "The House of the Spirits",
+    "author": "Isabel Allende",
+    "cover": "https://books.google.com/books/content?id=EbypCgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-house-of-the-spirits-isabel-allende"
+  },
+  {
+    "title": "Pedro Páramo",
+    "author": "Juan Rulfo",
+    "cover": "https://books.google.com/books/content?id=FnT5EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-pedro-p-ramo-juan-rulfo"
+  },
+  {
+    "title": "The Unbearable Lightness of Being",
+    "author": "Milan Kundera",
+    "cover": "https://books.google.com/books/content?id=JWqAAAAAIAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-the-unbearable-lightness-of-being-milan-kundera"
+  },
+  {
+    "title": "Kafka on the Shore",
+    "author": "Haruki Murakami",
+    "cover": "https://books.google.com/books/content?id=L6AtuutQHpwC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-kafka-on-the-shore-haruki-murakami"
+  },
+  {
+    "title": "Norwegian Wood",
+    "author": "Haruki Murakami",
+    "cover": "https://books.google.com/books/content?id=kd1XlWVAIWQC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-norwegian-wood-haruki-murakami"
+  },
+  {
+    "title": "The Wind-Up Bird Chronicle",
+    "author": "Haruki Murakami",
+    "cover": "https://books.google.com/books/content?id=-0tzfDCatVEC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-wind-up-bird-chronicle-haruki-murakami"
+  },
+  {
+    "title": "1Q84",
+    "author": "Haruki Murakami",
+    "cover": "https://books.google.com/books/content?id=SSqd7ph082kC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-1q84-haruki-murakami"
+  },
+  {
+    "title": "Colorless Tsukuru Tazaki and His Years of Pilgrimage",
+    "author": "Haruki Murakami",
+    "cover": "https://books.google.com/books/content?id=zrlZAwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-colorless-tsukuru-tazaki-and-his-years-of-pilgrimage-haruki-murakami"
+  },
+  {
+    "title": "Convenience Store Woman",
+    "author": "Sayaka Murata",
+    "cover": "https://books.google.com/books/content?id=5oFjDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-convenience-store-woman-sayaka-murata"
+  },
+  {
+    "title": "The Vegetarian",
+    "author": "Han Kang",
+    "cover": "https://books.google.com/books/content?id=qtDvCAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-vegetarian-han-kang"
+  },
+  {
+    "title": "Snow Country",
+    "author": "Yasunari Kawabata",
+    "cover": "https://books.google.com/books/content?id=rnavLDP0HeAC&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-snow-country-yasunari-kawabata"
+  },
+  {
+    "title": "Things Fall Apart",
+    "author": "Chinua Achebe",
+    "cover": "https://books.google.com/books/content?id=tSbWMu_-D5AC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-things-fall-apart-chinua-achebe"
+  },
+  {
+    "title": "The God of Small Things",
+    "author": "Arundhati Roy",
+    "cover": "https://books.google.com/books/content?id=nwICBETtEqYC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-god-of-small-things-arundhati-roy"
+  },
+  {
+    "title": "Midnight's Children",
+    "author": "Salman Rushdie",
+    "cover": "https://books.google.com/books/content?id=I4ITufjFf0oC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-midnight-s-children-salman-rushdie"
+  },
+  {
+    "title": "The Girl Who Kicked the Hornet's Nest",
+    "author": "Stieg Larsson",
+    "cover": "https://books.google.com/books/content?id=jB3-AwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-girl-who-kicked-the-hornet-s-nest-stieg-larsson"
+  },
+  {
+    "title": "The Snowman",
+    "author": "Jo Nesbø",
+    "cover": "https://books.google.com/books/content?id=9BEjX1U7Op4C&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-the-snowman-jo-nesb"
+  },
+  {
+    "title": "The Bat",
+    "author": "Jo Nesbø",
+    "cover": "https://books.google.com/books/content?id=wPO1DQAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-the-bat-jo-nesb"
+  },
+  {
+    "title": "The Redbreast",
+    "author": "Jo Nesbø",
+    "cover": "https://books.google.com/books/content?id=_f5ciyvMUzUC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-redbreast-jo-nesb"
+  },
+  {
+    "title": "The Leopard",
+    "author": "Jo Nesbø",
+    "cover": "https://books.google.com/books/content?id=8fzkngEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-the-leopard-jo-nesb"
+  },
+  {
+    "title": "Smilla's Sense of Snow",
+    "author": "Peter Høeg",
+    "cover": "https://books.google.com/books/content?id=jrNA8zm8wrUC&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-smilla-s-sense-of-snow-peter-h-eg"
+  },
+  {
+    "title": "The Hundred-Year-Old Man Who Climbed Out the Window and Disappeared",
+    "author": "Jonas Jonasson",
+    "cover": "https://books.google.com/books/content?id=Z85bAwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-hundred-year-old-man-who-climbed-out-the-window-and-disappeared-jonas-jonasson"
+  },
+  {
+    "title": "My Struggle: Book 1",
+    "author": "Karl Ove Knausgård",
+    "cover": "https://books.google.com/books/content?id=46KJ4ERrzNkC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-my-struggle-book-1-karl-ove-knausg-rd"
+  },
+  {
+    "title": "Out Stealing Horses",
+    "author": "Per Petterson",
+    "cover": "https://books.google.com/books/content?id=1bxyAQAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-out-stealing-horses-per-petterson"
+  },
+  {
+    "title": "Kristin Lavransdatter",
+    "author": "Sigrid Undset",
+    "cover": "https://books.google.com/books/content?id=WuzzBgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-kristin-lavransdatter-sigrid-undset"
+  },
+  {
+    "title": "Growth of the Soil",
+    "author": "Knut Hamsun",
+    "cover": "https://books.google.com/books/content?id=DKnLEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-growth-of-the-soil-knut-hamsun"
+  },
+  {
+    "title": "Hunger",
+    "author": "Knut Hamsun",
+    "cover": "https://books.google.com/books/content?id=MtuQf0cN--cC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-hunger-knut-hamsun"
+  },
+  {
+    "title": "Doppler",
+    "author": "Erlend Loe",
+    "cover": "https://books.google.com/books/content?id=Ea-fEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-doppler-erlend-loe"
+  },
+  {
+    "title": "Naive. Super",
+    "author": "Erlend Loe",
+    "cover": "https://books.google.com/books/content?id=EDuTxhd3qx8C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-naive-super-erlend-loe"
+  },
+  {
+    "title": "The Half Brother",
+    "author": "Lars Saabye Christensen",
+    "cover": "https://books.google.com/books/content?id=MMjtYYTpGgwC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-half-brother-lars-saabye-christensen"
+  },
+  {
+    "title": "Beatles",
+    "author": "Lars Saabye Christensen",
+    "cover": "https://books.google.com/books/content?id=O3VHEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-beatles-lars-saabye-christensen"
+  },
+  {
+    "title": "Sophie's World",
+    "author": "Jostein Gaarder",
+    "cover": "https://books.google.com/books/content?id=J8nE3B5lD9AC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-sophie-s-world-jostein-gaarder"
+  },
+  {
+    "title": "The Ice Palace",
+    "author": "Tarjei Vesaas",
+    "cover": "https://books.google.com/books/content?id=9mswDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-ice-palace-tarjei-vesaas"
+  },
+  {
+    "title": "The Birds",
+    "author": "Tarjei Vesaas",
+    "cover": "https://books.google.com/books/content?id=dV1HEQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-birds-tarjei-vesaas"
+  },
+  {
+    "title": "Doctor Glas",
+    "author": "Hjalmar Söderberg",
+    "cover": "https://books.google.com/books/content?id=sTa0AAAAIAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-doctor-glas-hjalmar-s-derberg"
+  },
+  {
+    "title": "The Emigrants",
+    "author": "Vilhelm Moberg",
+    "cover": "https://books.google.com/books/content?id=QJ7tAAAAMAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-the-emigrants-vilhelm-moberg"
+  },
+  {
+    "title": "A Death in the Family",
+    "author": "Karl Ove Knausgård",
+    "cover": "https://books.google.com/books/content?id=WX5gFURqF9sC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-a-death-in-the-family-karl-ove-knausg-rd"
+  },
+  {
+    "title": "The Consequences of Love",
+    "author": "Sulaiman Addonia",
+    "cover": "https://books.google.com/books/content?id=3InbXZge0S8C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-consequences-of-love-sulaiman-addonia"
+  },
+  {
+    "title": "Let the Right One In",
+    "author": "John Ajvide Lindqvist",
+    "cover": "https://books.google.com/books/content?id=Z4RL131qNeoC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-let-the-right-one-in-john-ajvide-lindqvist"
+  },
+  {
+    "title": "Roseanna",
+    "author": "Maj Sjöwall",
+    "cover": "https://books.google.com/books/content?id=sl5DAgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-roseanna-maj-sj-wall"
+  },
+  {
+    "title": "The Laughing Policeman",
+    "author": "Maj Sjöwall",
+    "cover": "https://books.google.com/books/content?id=ny5KAAAAYAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-the-laughing-policeman-maj-sj-wall"
+  },
+  {
+    "title": "Faceless Killers",
+    "author": "Henning Mankell",
+    "cover": "https://books.google.com/books/content?id=6Z7rNwAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-faceless-killers-henning-mankell"
+  },
+  {
+    "title": "The Dogs of Riga",
+    "author": "Henning Mankell",
+    "cover": "https://books.google.com/books/content?id=Io1TiIjvgU0C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-dogs-of-riga-henning-mankell"
+  },
+  {
+    "title": "The Dinner",
+    "author": "Herman Koch",
+    "cover": "https://books.google.com/books/content?id=0Ta6DQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-dinner-herman-koch"
+  },
+  {
+    "title": "The Unit",
+    "author": "Ninni Holmqvist",
+    "cover": "https://books.google.com/books/content?id=2DJXBAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-unit-ninni-holmqvist"
+  },
+  {
+    "title": "A Feast for Crows",
+    "author": "George R.R. Martin",
+    "cover": "https://books.google.com/books/content?id=6mhvBtafn3EC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-a-feast-for-crows-george-r-r-martin"
+  },
+  {
+    "title": "A Dance with Dragons",
+    "author": "George R.R. Martin",
+    "cover": "https://books.google.com/books/content?id=6UGTAWZwmsAC&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-a-dance-with-dragons-george-r-r-martin"
+  },
+  {
+    "title": "The Final Empire",
+    "author": "Brandon Sanderson",
+    "cover": "https://books.google.com/books/content?id=t_ZYYXZq4RgC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-final-empire-brandon-sanderson"
+  },
+  {
+    "title": "The Well of Ascension",
+    "author": "Brandon Sanderson",
+    "cover": "https://books.google.com/books/content?id=d3ewPoqF04kC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-well-of-ascension-brandon-sanderson"
+  },
+  {
+    "title": "The Hero of Ages",
+    "author": "Brandon Sanderson",
+    "cover": "https://books.google.com/books/content?id=uTt-H5MAGT0C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-hero-of-ages-brandon-sanderson"
+  },
+  {
+    "title": "Oathbringer",
+    "author": "Brandon Sanderson",
+    "cover": "https://books.google.com/books/content?id=VsT3DQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-oathbringer-brandon-sanderson"
+  },
+  {
+    "title": "Rhythm of War",
+    "author": "Brandon Sanderson",
+    "cover": "https://books.google.com/books/content?id=QCPBDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-rhythm-of-war-brandon-sanderson"
+  },
+  {
+    "title": "Elantris",
+    "author": "Brandon Sanderson",
+    "cover": "https://books.google.com/books/content?id=R_nt5CFaJKEC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-elantris-brandon-sanderson"
+  },
+  {
+    "title": "Warbreaker",
+    "author": "Brandon Sanderson",
+    "cover": "https://books.google.com/books/content?id=3Cjz7DKv74MC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-warbreaker-brandon-sanderson"
+  },
+  {
+    "title": "The Great Hunt",
+    "author": "Robert Jordan",
+    "cover": "https://books.google.com/books/content?id=yngEsxEO4QYC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-great-hunt-robert-jordan"
+  },
+  {
+    "title": "The Dragon Reborn",
+    "author": "Robert Jordan",
+    "cover": "https://books.google.com/books/content?id=4nWghD8QV0IC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-dragon-reborn-robert-jordan"
+  },
+  {
+    "title": "Assassin's Apprentice",
+    "author": "Robin Hobb",
+    "cover": "https://books.google.com/books/content?id=qMmREAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-assassin-s-apprentice-robin-hobb"
+  },
+  {
+    "title": "Royal Assassin",
+    "author": "Robin Hobb",
+    "cover": "https://books.google.com/books/content?id=dZNonS5wCOwC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-royal-assassin-robin-hobb"
+  },
+  {
+    "title": "The Lies of Locke Lamora",
+    "author": "Scott Lynch",
+    "cover": "https://books.google.com/books/content?id=dG8disouIykC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-lies-of-locke-lamora-scott-lynch"
+  },
+  {
+    "title": "The Blade Itself",
+    "author": "Joe Abercrombie",
+    "cover": "https://books.google.com/books/content?id=pvVSwRWXerEC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-blade-itself-joe-abercrombie"
+  },
+  {
+    "title": "The Fifth Season",
+    "author": "N.K. Jemisin",
+    "cover": "https://books.google.com/books/content?id=1-X5jgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-the-fifth-season-n-k-jemisin"
+  },
+  {
+    "title": "The Obelisk Gate",
+    "author": "N.K. Jemisin",
+    "cover": "https://books.google.com/books/content?id=vNBfCgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-obelisk-gate-n-k-jemisin"
+  },
+  {
+    "title": "Gardens of the Moon",
+    "author": "Steven Erikson",
+    "cover": "https://books.google.com/books/content?id=HLJ3PwAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-gardens-of-the-moon-steven-erikson"
+  },
+  {
+    "title": "The Black Prism",
+    "author": "Brent Weeks",
+    "cover": "https://books.google.com/books/content?id=bDcJqV-8dlIC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-black-prism-brent-weeks"
+  },
+  {
+    "title": "The Way of Shadows",
+    "author": "Brent Weeks",
+    "cover": "https://books.google.com/books/content?id=zK0GBAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-way-of-shadows-brent-weeks"
+  },
+  {
+    "title": "Mistborn: The Alloy of Law",
+    "author": "Brandon Sanderson",
+    "cover": "https://books.google.com/books/content?id=TjiYUm-47bQC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-mistborn-the-alloy-of-law-brandon-sanderson"
+  },
+  {
+    "title": "The Priory of the Orange Tree",
+    "author": "Samantha Shannon",
+    "cover": "https://books.google.com/books/content?id=QexdDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-priory-of-the-orange-tree-samantha-shannon"
+  },
+  {
+    "title": "The Poppy War",
+    "author": "R.F. Kuang",
+    "cover": "https://books.google.com/books/content?id=NKB8swEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-the-poppy-war-r-f-kuang"
+  },
+  {
+    "title": "The Bear and the Nightingale",
+    "author": "Katherine Arden",
+    "cover": "https://books.google.com/books/content?id=2l2PEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-the-bear-and-the-nightingale-katherine-arden"
+  },
+  {
+    "title": "Uprooted",
+    "author": "Naomi Novik",
+    "cover": "https://books.google.com/books/content?id=nNrEAwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-uprooted-naomi-novik"
+  },
+  {
+    "title": "Spinning Silver",
+    "author": "Naomi Novik",
+    "cover": "https://books.google.com/books/content?id=oF1BDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-spinning-silver-naomi-novik"
+  },
+  {
+    "title": "Jonathan Strange & Mr Norrell",
+    "author": "Susanna Clarke",
+    "cover": "https://books.google.com/books/content?id=xTG1BM3u8MoC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-jonathan-strange-mr-norrell-susanna-clarke"
+  },
+  {
+    "title": "Piranesi",
+    "author": "Susanna Clarke",
+    "cover": "https://books.google.com/books/content?id=pPa0DwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-piranesi-susanna-clarke"
+  },
+  {
+    "title": "The Atlas Six",
+    "author": "Olivie Blake",
+    "cover": "https://books.google.com/books/content?id=RweozgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-the-atlas-six-olivie-blake"
+  },
+  {
+    "title": "A Darker Shade of Magic",
+    "author": "V.E. Schwab",
+    "cover": "https://books.google.com/books/content?id=TD-_BgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-a-darker-shade-of-magic-v-e-schwab"
+  },
+  {
+    "title": "The Invisible Life of Addie LaRue",
+    "author": "V.E. Schwab",
+    "cover": "https://books.google.com/books/content?id=eof4DwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-invisible-life-of-addie-larue-v-e-schwab"
+  },
+  {
+    "title": "Children of Time",
+    "author": "Adrian Tchaikovsky",
+    "cover": "https://books.google.com/books/content?id=P3XCBgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-children-of-time-adrian-tchaikovsky"
+  },
+  {
+    "title": "Hyperion",
+    "author": "Dan Simmons",
+    "cover": "https://books.google.com/books/content?id=F4P4DwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-hyperion-dan-simmons"
+  },
+  {
+    "title": "Snow Crash",
+    "author": "Neal Stephenson",
+    "cover": "https://books.google.com/books/content?id=SXyqPwAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-snow-crash-neal-stephenson"
+  },
+  {
+    "title": "The Three-Body Problem",
+    "author": "Liu Cixin",
+    "cover": "https://books.google.com/books/content?id=Z7GfEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-three-body-problem-liu-cixin"
+  },
+  {
+    "title": "The Dark Forest",
+    "author": "Liu Cixin",
+    "cover": "https://books.google.com/books/content?id=a7GfEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-dark-forest-liu-cixin"
+  },
+  {
+    "title": "Death's End",
+    "author": "Liu Cixin",
+    "cover": "https://books.google.com/books/content?id=cbGfEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-death-s-end-liu-cixin"
+  },
+  {
+    "title": "Leviathan Wakes",
+    "author": "James S.A. Corey",
+    "cover": "https://books.google.com/books/content?id=-iB-1sc02DgC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-leviathan-wakes-james-s-a-corey"
+  },
+  {
+    "title": "A Fire Upon the Deep",
+    "author": "Vernor Vinge",
+    "cover": "https://books.google.com/books/content?id=uRjpxtbshBYC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-a-fire-upon-the-deep-vernor-vinge"
+  },
+  {
+    "title": "The Dispossessed",
+    "author": "Ursula K. Le Guin",
+    "cover": "https://books.google.com/books/content?id=qyeDCgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-dispossessed-ursula-k-le-guin"
+  },
+  {
+    "title": "Rendezvous with Rama",
+    "author": "Arthur C. Clarke",
+    "cover": "https://books.google.com/books/content?id=zGZ-3fHu8N0C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-rendezvous-with-rama-arthur-c-clarke"
+  },
+  {
+    "title": "2001: A Space Odyssey",
+    "author": "Arthur C. Clarke",
+    "cover": "https://books.google.com/books/content?id=uAmiJAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-2001-a-space-odyssey-arthur-c-clarke"
+  },
+  {
+    "title": "Childhood's End",
+    "author": "Arthur C. Clarke",
+    "cover": "https://books.google.com/books/content?id=OcspAAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-childhood-s-end-arthur-c-clarke"
+  },
+  {
+    "title": "Stranger in a Strange Land",
+    "author": "Robert A. Heinlein",
+    "cover": "https://books.google.com/books/content?id=ZQhiPwAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-stranger-in-a-strange-land-robert-a-heinlein"
+  },
+  {
+    "title": "Starship Troopers",
+    "author": "Robert A. Heinlein",
+    "cover": "https://books.google.com/books/content?id=1lK3xA72adAC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-starship-troopers-robert-a-heinlein"
+  },
+  {
+    "title": "The Forever War",
+    "author": "Joe Haldeman",
+    "cover": "https://books.google.com/books/content?id=qm2PPwAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-the-forever-war-joe-haldeman"
+  },
+  {
+    "title": "Red Rising",
+    "author": "Pierce Brown",
+    "cover": "https://books.google.com/books/content?id=_tbZ0QEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-red-rising-pierce-brown"
+  },
+  {
+    "title": "Golden Son",
+    "author": "Pierce Brown",
+    "cover": "https://books.google.com/books/content?id=B4zIAgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-golden-son-pierce-brown"
+  },
+  {
+    "title": "The Lean Startup",
+    "author": "Eric Ries",
+    "cover": "https://books.google.com/books/content?id=tvfyz-4JILwC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-lean-startup-eric-ries"
+  },
+  {
+    "title": "Zero to One",
+    "author": "Peter Thiel",
+    "cover": "https://books.google.com/books/content?id=ZH4oAwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-zero-to-one-peter-thiel"
+  },
+  {
+    "title": "Good to Great",
+    "author": "Jim Collins",
+    "cover": "https://books.google.com/books/content?id=7io-2eqxSS0C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-good-to-great-jim-collins"
+  },
+  {
+    "title": "Built to Last",
+    "author": "Jim Collins",
+    "cover": "https://books.google.com/books/content?id=hx6kmBa5EHMC&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-built-to-last-jim-collins"
+  },
+  {
+    "title": "The Hard Thing About Hard Things",
+    "author": "Ben Horowitz",
+    "cover": "https://books.google.com/books/content?id=620pAgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-hard-thing-about-hard-things-ben-horowitz"
+  },
+  {
+    "title": "Shoe Dog",
+    "author": "Phil Knight",
+    "cover": "https://books.google.com/books/content?id=wO3PCgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-shoe-dog-phil-knight"
+  },
+  {
+    "title": "The Innovator's Dilemma",
+    "author": "Clayton M. Christensen",
+    "cover": "https://books.google.com/books/content?id=3JnBAgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-innovator-s-dilemma-clayton-m-christensen"
+  },
+  {
+    "title": "Start with Why",
+    "author": "Simon Sinek",
+    "cover": "https://books.google.com/books/content?id=iyw6ul1x_n8C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-start-with-why-simon-sinek"
+  },
+  {
+    "title": "Leaders Eat Last",
+    "author": "Simon Sinek",
+    "cover": "https://books.google.com/books/content?id=bbeaAAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-leaders-eat-last-simon-sinek"
+  },
+  {
+    "title": "Dare to Lead",
+    "author": "Brené Brown",
+    "cover": "https://books.google.com/books/content?id=JdlbDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-dare-to-lead-bren-brown"
+  },
+  {
+    "title": "Daring Greatly",
+    "author": "Brené Brown",
+    "cover": "https://books.google.com/books/content?id=3rF7vvXa_yIC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-daring-greatly-bren-brown"
+  },
+  {
+    "title": "Grit",
+    "author": "Angela Duckworth",
+    "cover": "https://books.google.com/books/content?id=Xh2rEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-grit-angela-duckworth"
+  },
+  {
+    "title": "Mindset",
+    "author": "Carol S. Dweck",
+    "cover": "https://books.google.com/books/content?id=fdjqz0TPL2wC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-mindset-carol-s-dweck"
+  },
+  {
+    "title": "Drive",
+    "author": "Daniel H. Pink",
+    "cover": "https://books.google.com/books/content?id=l6x0a-jkoGUC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-drive-daniel-h-pink"
+  },
+  {
+    "title": "Range",
+    "author": "David Epstein",
+    "cover": "https://books.google.com/books/content?id=TzG5wgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-range-david-epstein"
+  },
+  {
+    "title": "Freakonomics",
+    "author": "Steven D. Levitt",
+    "cover": "https://books.google.com/books/content?id=kxsQhM4D8uIC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-freakonomics-steven-d-levitt"
+  },
+  {
+    "title": "Nudge",
+    "author": "Richard H. Thaler",
+    "cover": "https://books.google.com/books/content?id=mzZV9jFLltwC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-nudge-richard-h-thaler"
+  },
+  {
+    "title": "Predictably Irrational",
+    "author": "Dan Ariely",
+    "cover": "https://books.google.com/books/content?id=kApgNtTsAccC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-predictably-irrational-dan-ariely"
+  },
+  {
+    "title": "The Psychology of Money",
+    "author": "Morgan Housel",
+    "cover": "https://books.google.com/books/content?id=TnrrDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-psychology-of-money-morgan-housel"
+  },
+  {
+    "title": "The Intelligent Investor",
+    "author": "Benjamin Graham",
+    "cover": "https://books.google.com/books/content?id=-NdcCSt8t_YC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-intelligent-investor-benjamin-graham"
+  },
+  {
+    "title": "A Random Walk Down Wall Street",
+    "author": "Burton G. Malkiel",
+    "cover": "https://books.google.com/books/content?id=fAsZGQfmXG8C&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-a-random-walk-down-wall-street-burton-g-malkiel"
+  },
+  {
+    "title": "The Millionaire Next Door",
+    "author": "Thomas J. Stanley",
+    "cover": "https://books.google.com/books/content?id=DzytDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-millionaire-next-door-thomas-j-stanley"
+  },
+  {
+    "title": "I Will Teach You to Be Rich",
+    "author": "Ramit Sethi",
+    "cover": "https://books.google.com/books/content?id=cZ94EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-i-will-teach-you-to-be-rich-ramit-sethi"
+  },
+  {
+    "title": "The Almanack of Naval Ravikant",
+    "author": "Eric Jorgenson",
+    "cover": "https://books.google.com/books/content?id=T0FgEQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-almanack-of-naval-ravikant-eric-jorgenson"
+  },
+  {
+    "title": "The Compound Effect",
+    "author": "Darren Hardy",
+    "cover": "https://books.google.com/books/content?id=WINMDgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-compound-effect-darren-hardy"
+  },
+  {
+    "title": "Essentialism",
+    "author": "Greg McKeown",
+    "cover": "https://books.google.com/books/content?id=YWlcAgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-essentialism-greg-mckeown"
+  },
+  {
+    "title": "So Good They Can't Ignore You",
+    "author": "Cal Newport",
+    "cover": "https://books.google.com/books/content?id=HTs5AQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-so-good-they-can-t-ignore-you-cal-newport"
+  },
+  {
+    "title": "Digital Minimalism",
+    "author": "Cal Newport",
+    "cover": "https://books.google.com/books/content?id=S4NbDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-digital-minimalism-cal-newport"
+  },
+  {
+    "title": "The 4-Hour Workweek",
+    "author": "Timothy Ferriss",
+    "cover": "https://books.google.com/books/content?id=tQ1C-rvAfJUC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-4-hour-workweek-timothy-ferriss"
+  },
+  {
+    "title": "Tools of Titans",
+    "author": "Timothy Ferriss",
+    "cover": "https://books.google.com/books/content?id=fjr3DAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-tools-of-titans-timothy-ferriss"
+  },
+  {
+    "title": "21 Lessons for the 21st Century",
+    "author": "Yuval Noah Harari",
+    "cover": "https://books.google.com/books/content?id=ar44DwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-21-lessons-for-the-21st-century-yuval-noah-harari"
+  },
+  {
+    "title": "Guns, Germs, and Steel",
+    "author": "Jared Diamond",
+    "cover": "https://books.google.com/books/content?id=XLo9DgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-guns-germs-and-steel-jared-diamond"
+  },
+  {
+    "title": "The Selfish Gene",
+    "author": "Richard Dawkins",
+    "cover": "https://books.google.com/books/content?id=ekonDAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-selfish-gene-richard-dawkins"
+  },
+  {
+    "title": "Cosmos",
+    "author": "Carl Sagan",
+    "cover": "https://books.google.com/books/content?id=EIqoiww1r9sC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-cosmos-carl-sagan"
+  },
+  {
+    "title": "The Gene",
+    "author": "Siddhartha Mukherjee",
+    "cover": "https://books.google.com/books/content?id=fOvaCgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-gene-siddhartha-mukherjee"
+  },
+  {
+    "title": "The Emperor of All Maladies",
+    "author": "Siddhartha Mukherjee",
+    "cover": "https://books.google.com/books/content?id=hgx0sJvphNkC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-emperor-of-all-maladies-siddhartha-mukherjee"
+  },
+  {
+    "title": "Why We Sleep",
+    "author": "Matthew Walker",
+    "cover": "https://books.google.com/books/content?id=8bSuDgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-why-we-sleep-matthew-walker"
+  },
+  {
+    "title": "Breath",
+    "author": "James Nestor",
+    "cover": "https://books.google.com/books/content?id=a1CMEQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-breath-james-nestor"
+  },
+  {
+    "title": "Outlive",
+    "author": "Peter Attia",
+    "cover": "https://books.google.com/books/content?id=_LWZEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-outlive-peter-attia"
+  },
+  {
+    "title": "The Immortal Life of Henrietta Lacks",
+    "author": "Rebecca Skloot",
+    "cover": "https://books.google.com/books/content?id=tzlqDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-immortal-life-of-henrietta-lacks-rebecca-skloot"
+  },
+  {
+    "title": "When Breath Becomes Air",
+    "author": "Paul Kalanithi",
+    "cover": "https://books.google.com/books/content?id=Dg1sCQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-when-breath-becomes-air-paul-kalanithi"
+  },
+  {
+    "title": "Bad Blood",
+    "author": "John Carreyrou",
+    "cover": "https://books.google.com/books/content?id=CcJFDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-bad-blood-john-carreyrou"
+  },
+  {
+    "title": "The Devil in the White City",
+    "author": "Erik Larson",
+    "cover": "https://books.google.com/books/content?id=HOkTmxg8f_oC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-devil-in-the-white-city-erik-larson"
+  },
+  {
+    "title": "In Cold Blood",
+    "author": "Truman Capote",
+    "cover": "https://books.google.com/books/content?id=NGJubhmwqfoC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-in-cold-blood-truman-capote"
+  },
+  {
+    "title": "The Wright Brothers",
+    "author": "David McCullough",
+    "cover": "https://books.google.com/books/content?id=bLudBAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-wright-brothers-david-mccullough"
+  },
+  {
+    "title": "Team of Rivals",
+    "author": "Doris Kearns Goodwin",
+    "cover": "https://books.google.com/books/content?id=Cg0bDAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-team-of-rivals-doris-kearns-goodwin"
+  },
+  {
+    "title": "The Power Broker",
+    "author": "Robert A. Caro",
+    "cover": "https://books.google.com/books/content?id=gShR8MLd9kYC&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-the-power-broker-robert-a-caro"
+  },
+  {
+    "title": "Just Mercy",
+    "author": "Bryan Stevenson",
+    "cover": "https://books.google.com/books/content?id=egdxAwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-just-mercy-bryan-stevenson"
+  },
+  {
+    "title": "The Warmth of Other Suns",
+    "author": "Isabel Wilkerson",
+    "cover": "https://books.google.com/books/content?id=Y03WKII5m7QC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-warmth-of-other-suns-isabel-wilkerson"
+  },
+  {
+    "title": "Caste",
+    "author": "Isabel Wilkerson",
+    "cover": "https://books.google.com/books/content?id=HcLNDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-caste-isabel-wilkerson"
+  },
+  {
+    "title": "Between the World and Me",
+    "author": "Ta-Nehisi Coates",
+    "cover": "https://books.google.com/books/content?id=TV05BgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-between-the-world-and-me-ta-nehisi-coates"
+  },
+  {
+    "title": "The Body",
+    "author": "Bill Bryson",
+    "cover": "https://books.google.com/books/content?id=syEswQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-the-body-bill-bryson"
+  },
+  {
+    "title": "A Short History of Nearly Everything",
+    "author": "Bill Bryson",
+    "cover": "https://books.google.com/books/content?id=Z2UPAQAAMAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-a-short-history-of-nearly-everything-bill-bryson"
+  },
+  {
+    "title": "Talking to Strangers",
+    "author": "Malcolm Gladwell",
+    "cover": "https://books.google.com/books/content?id=FTiGDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-talking-to-strangers-malcolm-gladwell"
+  },
+  {
+    "title": "Blink",
+    "author": "Malcolm Gladwell",
+    "cover": "https://books.google.com/books/content?id=w_3zSAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-blink-malcolm-gladwell"
+  },
+  {
+    "title": "David and Goliath",
+    "author": "Malcolm Gladwell",
+    "cover": "https://books.google.com/books/content?id=jmecJ7fbeagC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-david-and-goliath-malcolm-gladwell"
   }
 ];
 

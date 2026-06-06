@@ -23,6 +23,12 @@ const ENRICH_CACHE_KEY = "bookEnrichCache_v1";
 const ENRICH_CACHE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 const ENRICH_CACHE_MAX_ENTRIES = 500;
 
+// If a search turns up at least this many strong matches in our local popular-
+// books cache, we show those and skip the Google Books API entirely. This is
+// the single biggest quota saver: common searches ("stephen king", "tolkien",
+// "the power of") are fully answered from the bundled cache with zero calls.
+const MIN_CACHE_HITS_TO_SKIP_API = 5;
+
 const LOADING_MESSAGES = [
   "📖 Analysing your reading taste...",
   "🔍 Searching the literary universe...",
@@ -65,6 +71,33 @@ function writeCache(key, obj, maxEntries) {
   } catch {
     // ignore quota errors
   }
+}
+
+// Rank cached (popular) books by how well they match the query, best first.
+// Scoring (highest wins): exact title > title starts-with > whole word in
+// title > substring in title > author starts-with > author substring.
+// This is what makes "the power of" surface "The Power of Now" / "The Power
+// of Habit" at the top instead of being buried under generic API results.
+// Array.sort is stable, so ties keep the curated order from popularBooks.js
+// (which is itself roughly popularity-ordered), giving bestsellers priority.
+function rankCachedMatches(books, query) {
+  const q = (query || "").trim().toLowerCase();
+  if (!q) return [];
+  const scored = [];
+  for (const b of books) {
+    const title = (b.title || "").toLowerCase();
+    const author = (b.author || "").toLowerCase();
+    let score = 0;
+    if (title === q) score = 100;
+    else if (title.startsWith(q)) score = 80;
+    else if (title.includes(" " + q)) score = 60;
+    else if (title.includes(q)) score = 40;
+    else if (author.startsWith(q)) score = 30;
+    else if (author.includes(q)) score = 20;
+    if (score > 0) scored.push({ b, score });
+  }
+  scored.sort((a, b) => b.score - a.score);
+  return scored.map((s) => s.b);
 }
 
 export default function App() {
@@ -246,16 +279,34 @@ export default function App() {
       return;
     }
 
-    // 1. Compute cached matches now (used in the merge for their covers),
-    // but DON'T render them yet — rendering here then re-rendering after the
-    // API responds causes a visible "jump". We set the dropdown only once.
-    const cached = cachedBooks.filter(
-      (b) =>
-        b.title.toLowerCase().includes(query.toLowerCase()) ||
-        b.author.toLowerCase().includes(query.toLowerCase())
-    );
+    // Rank local (popular-cache) matches synchronously — relevance-ordered so
+    // the most on-point bestsellers lead.
+    const ranked = rankCachedMatches(cachedBooks, query);
 
-    // 2. Fetch live results, then set the dropdown a single time with the merge.
+    // FAST PATH: if we already have enough strong local matches, show them
+    // instantly and skip the network entirely — no debounce, no spinner, no
+    // API call. This is where most of the quota savings come from.
+    if (ranked.length >= MIN_CACHE_HITS_TO_SKIP_API) {
+      clearTimeout(debounceRef.current);
+      if (searchAbortRef.current) {
+        searchAbortRef.current.abort();
+        searchAbortRef.current = null;
+      }
+      setDropdown(ranked.slice(0, 15));
+      setDropdownOpen(true);
+      setSelectedIndex(-1);
+      setSearching(false);
+      return;
+    }
+
+    // SLOW PATH: not enough local matches. Show whatever we have right away so
+    // the dropdown isn't empty, then fetch live to supplement / fill it out.
+    if (ranked.length > 0) {
+      setDropdown(ranked.slice(0, 15));
+      setDropdownOpen(true);
+      setSelectedIndex(-1);
+    }
+
     clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(async () => {
       // Check the localStorage search cache first — same query within the TTL
@@ -306,10 +357,11 @@ export default function App() {
           }
         }
 
-        // Merge: prioritize live results with covers, then cached, then live without covers.
+        // Merge: RANKED CACHED FIRST (popular/relevant books lead), then live
+        // results with covers, then live results without covers as a fallback.
         // Dedupe on BOTH the source key AND a normalized title+author signature,
-        // so the same book appearing as multiple Google Books editions (or in both
-        // the cache and live results) only shows up once.
+        // so the same book appearing as multiple Google Books editions (or in
+        // both the cache and live results) only shows up once.
         const sig = (b) => normKey(b.title) + "|||" + normKey(b.author);
         const seenKeys = new Set();
         const seenSigs = new Set();
@@ -321,23 +373,19 @@ export default function App() {
           seenSigs.add(sig(b));
         };
 
-        // First: live results WITH covers
+        // First: ranked cached matches (popular books, relevance-ordered)
+        for (const b of ranked) tryAdd(b);
+        // Second: live results WITH covers
         for (const b of liveResults) {
           if (b.cover) tryAdd(b);
         }
-
-        // Second: cached results (already have enriched covers if available)
-        for (const b of cached) {
-          tryAdd(b);
-        }
-
         // Third: live results WITHOUT covers (fallback)
         for (const b of liveResults) {
           if (!b.cover) tryAdd(b);
         }
 
-        // If the API returned nothing usable, fall back to cached matches.
-        const finalList = merged.length > 0 ? merged : cached;
+        // If the API returned nothing usable, fall back to ranked cached matches.
+        const finalList = merged.length > 0 ? merged : ranked;
         setDropdown(finalList.slice(0, 15));
         setDropdownOpen(true);
         setSelectedIndex(-1);
@@ -346,8 +394,8 @@ export default function App() {
         // On a real failure, show cached matches so the dropdown isn't empty.
         if (err.name !== "AbortError") {
           console.error(err);
-          if (cached.length > 0) {
-            setDropdown(cached.slice(0, 15));
+          if (ranked.length > 0) {
+            setDropdown(ranked.slice(0, 15));
             setDropdownOpen(true);
             setSelectedIndex(-1);
           }

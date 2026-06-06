@@ -273,6 +273,284 @@ const RAW = [
   ["Deep Work", "Cal Newport"],
   ["Ikigai", "Héctor García"],
   ["The 48 Laws of Power", "Robert Greene"],
+
+  // ============================================================
+  // EXPANSION SET — added to broaden cache coverage.
+  // ============================================================
+
+  // ---- Newer bestsellers (2015-2026) ----
+  ["A Little Life", "Hanya Yanagihara"],
+  ["Lessons in Chemistry", "Bonnie Garmus"],
+  ["Tomorrow, and Tomorrow, and Tomorrow", "Gabrielle Zevin"],
+  ["Demon Copperhead", "Barbara Kingsolver"],
+  ["The Covenant of Water", "Abraham Verghese"],
+  ["Trust", "Hernan Diaz"],
+  ["The Lincoln Highway", "Amor Towles"],
+  ["A Gentleman in Moscow", "Amor Towles"],
+  ["The Overstory", "Richard Powers"],
+  ["Pachinko", "Min Jin Lee"],
+  ["Little Fires Everywhere", "Celeste Ng"],
+  ["Everything I Never Told You", "Celeste Ng"],
+  ["The Vanishing Half", "Brit Bennett"],
+  ["An American Marriage", "Tayari Jones"],
+  ["The Nightingale", "Kristin Hannah"],
+  ["The Four Winds", "Kristin Hannah"],
+  ["The Great Alone", "Kristin Hannah"],
+  ["All the Light We Cannot See", "Anthony Doerr"],
+  ["The Underground Railroad", "Colson Whitehead"],
+  ["The Nickel Boys", "Colson Whitehead"],
+  ["Hamnet", "Maggie O'Farrell"],
+  ["The Dutch House", "Ann Patchett"],
+  ["Bel Canto", "Ann Patchett"],
+  ["The Goldfinch", "Donna Tartt"],
+  ["Klara and the Sun", "Kazuo Ishiguro"],
+  ["The Sympathizer", "Viet Thanh Nguyen"],
+  ["A Brief History of Seven Killings", "Marlon James"],
+  ["Shuggie Bain", "Douglas Stuart"],
+  ["The Seven Moons of Maali Almeida", "Shehan Karunatilaka"],
+  ["Prophet Song", "Paul Lynch"],
+  ["The Bee Sting", "Paul Murray"],
+  ["Yellowface", "R.F. Kuang"],
+  ["Babel", "R.F. Kuang"],
+  ["The Thursday Murder Club", "Richard Osman"],
+  ["The Man Who Died Twice", "Richard Osman"],
+  ["Anxious People", "Fredrik Backman"],
+  ["A Man Called Ove", "Fredrik Backman"],
+  ["Beartown", "Fredrik Backman"],
+  ["The Maid", "Nita Prose"],
+  ["Eleanor Oliphant Is Completely Fine", "Gail Honeyman"],
+  ["The Midnight Library", "Matt Haig"],
+  ["The Humans", "Matt Haig"],
+  ["Project Hail Mary", "Andy Weir"],
+  ["Cloud Cuckoo Land", "Anthony Doerr"],
+  ["Sea of Tranquility", "Emily St. John Mandel"],
+  ["Station Eleven", "Emily St. John Mandel"],
+  ["The Glass Hotel", "Emily St. John Mandel"],
+
+  // ---- Romance / BookTok favorites ----
+  ["It Ends with Us", "Colleen Hoover"],
+  ["It Starts with Us", "Colleen Hoover"],
+  ["Verity", "Colleen Hoover"],
+  ["Ugly Love", "Colleen Hoover"],
+  ["November 9", "Colleen Hoover"],
+  ["Reminders of Him", "Colleen Hoover"],
+  ["Fourth Wing", "Rebecca Yarros"],
+  ["Iron Flame", "Rebecca Yarros"],
+  ["A Court of Thorns and Roses", "Sarah J. Maas"],
+  ["A Court of Mist and Fury", "Sarah J. Maas"],
+  ["A Court of Wings and Ruin", "Sarah J. Maas"],
+  ["A Court of Silver Flames", "Sarah J. Maas"],
+  ["House of Earth and Blood", "Sarah J. Maas"],
+  ["Throne of Glass", "Sarah J. Maas"],
+  ["The Love Hypothesis", "Ali Hazelwood"],
+  ["Love on the Brain", "Ali Hazelwood"],
+  ["Beach Read", "Emily Henry"],
+  ["People We Meet on Vacation", "Emily Henry"],
+  ["Book Lovers", "Emily Henry"],
+  ["Happy Place", "Emily Henry"],
+  ["Funny Story", "Emily Henry"],
+  ["The Spanish Love Deception", "Elena Armas"],
+  ["Icebreaker", "Hannah Grace"],
+  ["The Hating Game", "Sally Thorne"],
+  ["Red, White & Royal Blue", "Casey McQuiston"],
+  ["One Last Stop", "Casey McQuiston"],
+  ["The Seven Husbands of Evelyn Hugo", "Taylor Jenkins Reid"],
+  ["Daisy Jones & The Six", "Taylor Jenkins Reid"],
+  ["Malibu Rising", "Taylor Jenkins Reid"],
+  ["Carrie Soto Is Back", "Taylor Jenkins Reid"],
+  ["The Song of Achilles", "Madeline Miller"],
+  ["Circe", "Madeline Miller"],
+  ["A Little Life", "Hanya Yanagihara"],
+  ["The Cruel Prince", "Holly Black"],
+  ["The Wicked King", "Holly Black"],
+  ["Twisted Love", "Ana Huang"],
+  ["Haunting Adeline", "H.D. Carlton"],
+
+  // ---- World classics (translated / non-English origin) ----
+  ["The Master and Margarita", "Mikhail Bulgakov"],
+  ["Doctor Zhivago", "Boris Pasternak"],
+  ["Notes from Underground", "Fyodor Dostoevsky"],
+  ["The Idiot", "Fyodor Dostoevsky"],
+  ["Fathers and Sons", "Ivan Turgenev"],
+  ["Dead Souls", "Nikolai Gogol"],
+  ["Madame Bovary", "Gustave Flaubert"],
+  ["The Red and the Black", "Stendhal"],
+  ["Germinal", "Émile Zola"],
+  ["Candide", "Voltaire"],
+  ["The Plague", "Albert Camus"],
+  ["The Fall", "Albert Camus"],
+  ["Nausea", "Jean-Paul Sartre"],
+  ["The Tin Drum", "Günter Grass"],
+  ["Death in Venice", "Thomas Mann"],
+  ["The Magic Mountain", "Thomas Mann"],
+  ["Buddenbrooks", "Thomas Mann"],
+  ["The Name of the Rose", "Umberto Eco"],
+  ["If on a Winter's Night a Traveler", "Italo Calvino"],
+  ["The Leopard", "Giuseppe Tomasi di Lampedusa"],
+  ["My Brilliant Friend", "Elena Ferrante"],
+  ["The Story of a New Name", "Elena Ferrante"],
+  ["The Shadow of the Wind", "Carlos Ruiz Zafón"],
+  ["The House of the Spirits", "Isabel Allende"],
+  ["Pedro Páramo", "Juan Rulfo"],
+  ["The Trial", "Franz Kafka"],
+  ["The Unbearable Lightness of Being", "Milan Kundera"],
+  ["Kafka on the Shore", "Haruki Murakami"],
+  ["Norwegian Wood", "Haruki Murakami"],
+  ["The Wind-Up Bird Chronicle", "Haruki Murakami"],
+  ["1Q84", "Haruki Murakami"],
+  ["Colorless Tsukuru Tazaki and His Years of Pilgrimage", "Haruki Murakami"],
+  ["Convenience Store Woman", "Sayaka Murata"],
+  ["The Vegetarian", "Han Kang"],
+  ["Snow Country", "Yasunari Kawabata"],
+  ["Things Fall Apart", "Chinua Achebe"],
+  ["The God of Small Things", "Arundhati Roy"],
+  ["Midnight's Children", "Salman Rushdie"],
+
+  // ---- Scandinavian / Nordic ----
+  ["The Girl Who Kicked the Hornet's Nest", "Stieg Larsson"],
+  ["The Snowman", "Jo Nesbø"],
+  ["The Bat", "Jo Nesbø"],
+  ["The Redbreast", "Jo Nesbø"],
+  ["The Leopard", "Jo Nesbø"],
+  ["Smilla's Sense of Snow", "Peter Høeg"],
+  ["The Hundred-Year-Old Man Who Climbed Out the Window and Disappeared", "Jonas Jonasson"],
+  ["My Struggle: Book 1", "Karl Ove Knausgård"],
+  ["Out Stealing Horses", "Per Petterson"],
+  ["Kristin Lavransdatter", "Sigrid Undset"],
+  ["Growth of the Soil", "Knut Hamsun"],
+  ["Hunger", "Knut Hamsun"],
+  ["Doppler", "Erlend Loe"],
+  ["Naive. Super", "Erlend Loe"],
+  ["The Half Brother", "Lars Saabye Christensen"],
+  ["Beatles", "Lars Saabye Christensen"],
+  ["Sophie's World", "Jostein Gaarder"],
+  ["The Ice Palace", "Tarjei Vesaas"],
+  ["The Birds", "Tarjei Vesaas"],
+  ["Doctor Glas", "Hjalmar Söderberg"],
+  ["The Emigrants", "Vilhelm Moberg"],
+  ["A Death in the Family", "Karl Ove Knausgård"],
+  ["The Consequences of Love", "Sulaiman Addonia"],
+  ["Let the Right One In", "John Ajvide Lindqvist"],
+  ["Roseanna", "Maj Sjöwall"],
+  ["The Laughing Policeman", "Maj Sjöwall"],
+  ["Faceless Killers", "Henning Mankell"],
+  ["The Dogs of Riga", "Henning Mankell"],
+  ["The Dinner", "Herman Koch"],
+  ["The Unit", "Ninni Holmqvist"],
+
+  // ---- More fantasy / sci-fi series ----
+  ["The Two Towers", "J.R.R. Tolkien"],
+  ["The Return of the King", "J.R.R. Tolkien"],
+  ["A Feast for Crows", "George R.R. Martin"],
+  ["A Dance with Dragons", "George R.R. Martin"],
+  ["The Wise Man's Fear", "Patrick Rothfuss"],
+  ["The Final Empire", "Brandon Sanderson"],
+  ["The Well of Ascension", "Brandon Sanderson"],
+  ["The Hero of Ages", "Brandon Sanderson"],
+  ["Oathbringer", "Brandon Sanderson"],
+  ["Rhythm of War", "Brandon Sanderson"],
+  ["Elantris", "Brandon Sanderson"],
+  ["Warbreaker", "Brandon Sanderson"],
+  ["The Great Hunt", "Robert Jordan"],
+  ["The Dragon Reborn", "Robert Jordan"],
+  ["Assassin's Apprentice", "Robin Hobb"],
+  ["Royal Assassin", "Robin Hobb"],
+  ["The Lies of Locke Lamora", "Scott Lynch"],
+  ["The Blade Itself", "Joe Abercrombie"],
+  ["The Fifth Season", "N.K. Jemisin"],
+  ["The Obelisk Gate", "N.K. Jemisin"],
+  ["Gardens of the Moon", "Steven Erikson"],
+  ["The Black Prism", "Brent Weeks"],
+  ["The Way of Shadows", "Brent Weeks"],
+  ["Mistborn: The Alloy of Law", "Brandon Sanderson"],
+  ["The Priory of the Orange Tree", "Samantha Shannon"],
+  ["The Poppy War", "R.F. Kuang"],
+  ["The Bear and the Nightingale", "Katherine Arden"],
+  ["Uprooted", "Naomi Novik"],
+  ["Spinning Silver", "Naomi Novik"],
+  ["Jonathan Strange & Mr Norrell", "Susanna Clarke"],
+  ["Piranesi", "Susanna Clarke"],
+  ["The Atlas Six", "Olivie Blake"],
+  ["A Darker Shade of Magic", "V.E. Schwab"],
+  ["The Invisible Life of Addie LaRue", "V.E. Schwab"],
+  ["Children of Time", "Adrian Tchaikovsky"],
+  ["Hyperion", "Dan Simmons"],
+  ["Snow Crash", "Neal Stephenson"],
+  ["The Three-Body Problem", "Liu Cixin"],
+  ["The Dark Forest", "Liu Cixin"],
+  ["Death's End", "Liu Cixin"],
+  ["Leviathan Wakes", "James S.A. Corey"],
+  ["A Fire Upon the Deep", "Vernor Vinge"],
+  ["The Dispossessed", "Ursula K. Le Guin"],
+  ["Rendezvous with Rama", "Arthur C. Clarke"],
+  ["2001: A Space Odyssey", "Arthur C. Clarke"],
+  ["Childhood's End", "Arthur C. Clarke"],
+  ["Stranger in a Strange Land", "Robert A. Heinlein"],
+  ["Starship Troopers", "Robert A. Heinlein"],
+  ["The Forever War", "Joe Haldeman"],
+  ["Red Rising", "Pierce Brown"],
+  ["Golden Son", "Pierce Brown"],
+  ["The Blade Itself", "Joe Abercrombie"],
+
+  // ---- More non-fiction / business / self-help ----
+  ["The Lean Startup", "Eric Ries"],
+  ["Zero to One", "Peter Thiel"],
+  ["Good to Great", "Jim Collins"],
+  ["Built to Last", "Jim Collins"],
+  ["The Hard Thing About Hard Things", "Ben Horowitz"],
+  ["Shoe Dog", "Phil Knight"],
+  ["The Innovator's Dilemma", "Clayton M. Christensen"],
+  ["Start with Why", "Simon Sinek"],
+  ["Leaders Eat Last", "Simon Sinek"],
+  ["Dare to Lead", "Brené Brown"],
+  ["Daring Greatly", "Brené Brown"],
+  ["Grit", "Angela Duckworth"],
+  ["Mindset", "Carol S. Dweck"],
+  ["Drive", "Daniel H. Pink"],
+  ["Range", "David Epstein"],
+  ["Freakonomics", "Steven D. Levitt"],
+  ["Nudge", "Richard H. Thaler"],
+  ["Predictably Irrational", "Dan Ariely"],
+  ["The Psychology of Money", "Morgan Housel"],
+  ["The Intelligent Investor", "Benjamin Graham"],
+  ["A Random Walk Down Wall Street", "Burton G. Malkiel"],
+  ["The Millionaire Next Door", "Thomas J. Stanley"],
+  ["I Will Teach You to Be Rich", "Ramit Sethi"],
+  ["The Almanack of Naval Ravikant", "Eric Jorgenson"],
+  ["Atomic Habits", "James Clear"],
+  ["The Compound Effect", "Darren Hardy"],
+  ["Essentialism", "Greg McKeown"],
+  ["So Good They Can't Ignore You", "Cal Newport"],
+  ["Digital Minimalism", "Cal Newport"],
+  ["The 4-Hour Workweek", "Timothy Ferriss"],
+  ["Tools of Titans", "Timothy Ferriss"],
+  ["Sapiens: A Brief History of Humankind", "Yuval Noah Harari"],
+  ["21 Lessons for the 21st Century", "Yuval Noah Harari"],
+  ["Guns, Germs, and Steel", "Jared Diamond"],
+  ["The Selfish Gene", "Richard Dawkins"],
+  ["Cosmos", "Carl Sagan"],
+  ["The Gene", "Siddhartha Mukherjee"],
+  ["The Emperor of All Maladies", "Siddhartha Mukherjee"],
+  ["Why We Sleep", "Matthew Walker"],
+  ["Breath", "James Nestor"],
+  ["Outlive", "Peter Attia"],
+  ["The Immortal Life of Henrietta Lacks", "Rebecca Skloot"],
+  ["When Breath Becomes Air", "Paul Kalanithi"],
+  ["Bad Blood", "John Carreyrou"],
+  ["The Devil in the White City", "Erik Larson"],
+  ["In Cold Blood", "Truman Capote"],
+  ["The Wright Brothers", "David McCullough"],
+  ["Team of Rivals", "Doris Kearns Goodwin"],
+  ["The Power Broker", "Robert A. Caro"],
+  ["Just Mercy", "Bryan Stevenson"],
+  ["The Warmth of Other Suns", "Isabel Wilkerson"],
+  ["Caste", "Isabel Wilkerson"],
+  ["Between the World and Me", "Ta-Nehisi Coates"],
+  ["The Body", "Bill Bryson"],
+  ["A Short History of Nearly Everything", "Bill Bryson"],
+  ["Talking to Strangers", "Malcolm Gladwell"],
+  ["Blink", "Malcolm Gladwell"],
+  ["David and Goliath", "Malcolm Gladwell"],
 ];
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -280,42 +558,86 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 // Force https so the cover loads on an https site (Google sometimes returns http).
 const toHttps = (url) => (url ? url.replace(/^http:\/\//, "https://") : null);
 
-async function fetchCover(title, author, retries = 0) {
-  const q = encodeURIComponent(`${title} ${author}`);
+// Pull the first cover image from a list of Google Books items. Many top
+// results are odd editions (audiobooks, study guides, foreign re-issues) that
+// have no imageLinks, so we walk the list until we find one that does.
+function firstCoverFromItems(items) {
+  for (const it of items || []) {
+    const links = it?.volumeInfo?.imageLinks;
+    const c = links?.thumbnail || links?.smallThumbnail;
+    if (c) return toHttps(c);
+  }
+  return null;
+}
+
+// Run a single Google Books query with rate-limit retry. Returns the items
+// array (possibly empty) or null on a hard failure.
+async function queryGoogleBooks(queryString, label, retries = 0) {
   const keyParam = API_KEY ? `&key=${API_KEY}` : "";
-  const url = `https://www.googleapis.com/books/v1/volumes?q=${q}&maxResults=1${keyParam}`;
+  const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(queryString)}&maxResults=5${keyParam}`;
   try {
     const res = await fetch(url);
     if (res.status === 429) {
-      // Rate limited. Back off and retry up to 3 times.
       if (retries < 3) {
-        const backoffMs = 1500 + retries * 1000; // 1.5s, 2.5s, 3.5s
-        console.warn(`  ! 429 rate limit for "${title}" — backing off ${backoffMs}ms, retry ${retries + 1}/3`);
+        const backoffMs = 1500 + retries * 1000;
+        console.warn(`  ! 429 rate limit for "${label}" — backing off ${backoffMs}ms, retry ${retries + 1}/3`);
         await sleep(backoffMs);
-        return fetchCover(title, author, retries + 1);
-      } else {
-        console.warn(`  ! 429 (gave up after retries) for "${title}"`);
-        return null;
+        return queryGoogleBooks(queryString, label, retries + 1);
       }
+      console.warn(`  ! 429 (gave up after retries) for "${label}"`);
+      return null;
     }
     if (!res.ok) {
-      console.warn(`  ! ${res.status} for "${title}"`);
+      console.warn(`  ! ${res.status} for "${label}"`);
       return null;
     }
     const data = await res.json();
-    const img = data.items?.[0]?.volumeInfo?.imageLinks;
-    return toHttps(img?.thumbnail || img?.smallThumbnail || null);
+    return data.items || [];
   } catch (e) {
-    console.warn(`  ! error for "${title}": ${e.message}`);
+    console.warn(`  ! error for "${label}": ${e.message}`);
     return null;
   }
 }
 
+async function fetchCover(title, author) {
+  // Strategy 1: strict intitle/inauthor query — usually returns canonical editions.
+  let items = await queryGoogleBooks(`intitle:${title} inauthor:${author}`, title);
+  let cover = firstCoverFromItems(items);
+  if (cover) return cover;
+
+  // Strategy 2: looser plain-text query — same query the app uses, catches
+  // books where the catalog title varies slightly from our RAW list.
+  items = await queryGoogleBooks(`${title} ${author}`, title);
+  cover = firstCoverFromItems(items);
+  if (cover) return cover;
+
+  return null;
+}
+
 async function main() {
+  // Dedupe the RAW list by computed key first — the curated list spans several
+  // category sections and the same book can legitimately appear in two of them
+  // (e.g. a literary title that's also a BookTok favorite). Keep first occurrence.
+  const seenKeys = new Set();
+  const dedupedRaw = [];
+  let dupCount = 0;
+  for (const [title, author] of RAW) {
+    const key = "pop-" + slug(title + "-" + author);
+    if (seenKeys.has(key)) {
+      dupCount++;
+      continue;
+    }
+    seenKeys.add(key);
+    dedupedRaw.push([title, author]);
+  }
+  if (dupCount > 0) {
+    console.log(`Removed ${dupCount} duplicate title(s) from RAW (${dedupedRaw.length} unique).`);
+  }
+
   // First pass: figure out which books need fetching vs. which we can reuse.
   // We compute the key the same way as the final output so we can look up
   // existing covers without re-fetching.
-  const plan = RAW.map(([title, author]) => {
+  const plan = dedupedRaw.map(([title, author]) => {
     const key = "pop-" + slug(title + "-" + author);
     const existing = existingCovers.get(key);
     return { title, author, key, existing: existing || null };
