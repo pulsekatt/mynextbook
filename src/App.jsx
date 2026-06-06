@@ -824,12 +824,20 @@ export default function App() {
 
         /* ---- Mobile tweaks (phones) ---- */
         @media (max-width: 600px) {
-          /* 2 (this round). Home button: ease it off the very top-right corner. */
+          /* Home button on mobile: collapse to a compact round icon-only
+             button tucked in the corner, so it never overlaps the trust
+             pills. The "Home" text label is hidden; just the 🏠 shows. */
           .home-button {
-            top: 14px !important;
+            top: 12px !important;
             right: 12px !important;
-            padding: 6px 12px !important;
-            font-size: 12px !important;
+            padding: 8px !important;
+            width: 38px !important;
+            height: 38px !important;
+            justify-content: center !important;
+            gap: 0 !important;
+          }
+          .home-label {
+            display: none !important;
           }
 
           /* Action buttons row layout on mobile:
@@ -879,8 +887,8 @@ export default function App() {
             margin-left: 0 !important;
           }
           .search-label {
-            font-size: 11px !important;
-            margin-bottom: 5px !important;
+            font-size: 14px !important;
+            margin-bottom: 6px !important;
           }
 
           /* 3. Stack the "how it works" cards vertically on mobile */
@@ -975,7 +983,7 @@ export default function App() {
             }}
           >
             <span style={{ fontSize: 14 }}>🏠</span>
-            <span>Home</span>
+            <span className="home-label">Home</span>
           </button>
         )}
 
@@ -1118,10 +1126,10 @@ export default function App() {
                 display: "block",
                 textAlign: "left",
                 marginLeft: 4,
-                marginBottom: 7,
+                marginBottom: 8,
                 color: "#7c6faa",
-                fontSize: 13,
-                fontWeight: 600,
+                fontSize: 16,
+                fontWeight: 700,
                 letterSpacing: 0.2,
               }}
             >
