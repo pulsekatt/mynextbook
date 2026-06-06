@@ -1362,7 +1362,7 @@ export default function App() {
                   icon: "📖",
                   step: "3",
                   title: "Get recommendations",
-                  desc: "Discover 5 books perfectly matched to you",
+                  desc: "Discover 5 books perfectly matched to you — 100% free, forever",
                 },
               ].map((s, i) => (
                 <div
