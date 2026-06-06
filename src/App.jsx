@@ -34,6 +34,21 @@ const SHARE_URL = "https://mynextbook.io";
 const SHARE_TEXT =
   "I found my next read with My Next Book — a free AI tool that recommends books based on what you've loved. Try it:";
 
+// Header taglines — one is picked at random on each load to keep the landing
+// fresh for repeat visitors. Each is a [setup, payoff] pair shown on two lines.
+const TAGLINES = [
+  ["Tell us what you couldn't put down.", "We'll find the next one."],
+  ["You finished the book.", "Let's find your next obsession."],
+  ["Tell us what you've loved reading —", "we'll find your next obsession."],
+  ["The end of \u201cwhat should I read next?\u201d", "starts here."],
+  ["You've got great taste.", "Let's prove it."],
+  ["Books you'll love,", "chosen from the ones you already do."],
+  ["Your next obsession is already out there.", "Let's go get it."],
+  ["Great readers never run out", "of great books."],
+  ["Never stare at your bookshelf again.", "Tell us what you loved."],
+  ["Five books. Zero guesswork.", "One you won't put down."],
+];
+
 const LOADING_MESSAGES = [
   "📖 Analysing your reading taste...",
   "🔍 Searching the literary universe...",
@@ -118,6 +133,11 @@ export default function App() {
   // confirmation after the copy-link button is used.
   const [hoveredShare, setHoveredShare] = useState(null);
   const [shareCopied, setShareCopied] = useState(false);
+  // Pick a random header tagline once, on first render, so it stays stable for
+  // the whole session but varies between visits.
+  const [tagline] = useState(
+    () => TAGLINES[Math.floor(Math.random() * TAGLINES.length)]
+  );
   const [isMobile, setIsMobile] = useState(
     typeof window !== "undefined" ? window.innerWidth <= 600 : false
   );
@@ -1090,8 +1110,8 @@ export default function App() {
               lineHeight: 1.7,
             }}
           >
-            Tell us what you've loved reading —<br />
-            we'll find your next obsession.
+            {tagline[0]}<br />
+            {tagline[1]}
           </p>
         </div>
       </div>
