@@ -1125,7 +1125,7 @@ export default function App() {
                 letterSpacing: 0.2,
               }}
             >
-              📚 Books you've read
+              📚 Add books you've already read
             </label>
           )}
           <input
@@ -1154,8 +1154,8 @@ export default function App() {
             }}
             placeholder={
               myBooks.length > 0
-                ? (isMobile ? "🔍 Add more books..." : "🔍 Add more books you've read...")
-                : (isMobile ? "🔍 Search a book..." : "🔍 Search for a book you've read...")
+                ? (isMobile ? "🔍 Add another title..." : "🔍 Add another book you've read...")
+                : (isMobile ? "🔍 e.g. The Hobbit, Dune..." : "🔍 e.g. The Hobbit, Dune, Project Hail Mary...")
             }
             style={{
               width: "100%",
