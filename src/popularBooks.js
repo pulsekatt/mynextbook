@@ -31,6 +31,18 @@ const POPULAR_BOOKS = [
     "key": "pop-the-little-prince-antoine-de-saint-exup-ry"
   },
   {
+    "title": "Don Quixote",
+    "author": "Miguel de Cervantes",
+    "cover": null,
+    "key": "pop-don-quixote-miguel-de-cervantes"
+  },
+  {
+    "title": "The Count of Monte Cristo",
+    "author": "Alexandre Dumas",
+    "cover": null,
+    "key": "pop-the-count-of-monte-cristo-alexandre-dumas"
+  },
+  {
     "title": "The Three Musketeers",
     "author": "Alexandre Dumas",
     "cover": "https://books.google.com/books/content?id=MF4wEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
@@ -49,6 +61,12 @@ const POPULAR_BOOKS = [
     "key": "pop-sense-and-sensibility-jane-austen"
   },
   {
+    "title": "Emma",
+    "author": "Jane Austen",
+    "cover": null,
+    "key": "pop-emma-jane-austen"
+  },
+  {
     "title": "Jane Eyre",
     "author": "Charlotte Brontë",
     "cover": "https://books.google.com/books/content?id=AGxyadJ1RMMC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
@@ -65,6 +83,12 @@ const POPULAR_BOOKS = [
     "author": "Harper Lee",
     "cover": "https://books.google.com/books/content?id=DRagKAMw8AcC&printsec=frontcover&img=1&zoom=1&source=gbs_api",
     "key": "pop-to-kill-a-mockingbird-harper-lee"
+  },
+  {
+    "title": "The Great Gatsby",
+    "author": "F. Scott Fitzgerald",
+    "cover": null,
+    "key": "pop-the-great-gatsby-f-scott-fitzgerald"
   },
   {
     "title": "1984",
@@ -115,6 +139,12 @@ const POPULAR_BOOKS = [
     "key": "pop-east-of-eden-john-steinbeck"
   },
   {
+    "title": "Moby-Dick",
+    "author": "Herman Melville",
+    "cover": null,
+    "key": "pop-moby-dick-herman-melville"
+  },
+  {
     "title": "The Adventures of Huckleberry Finn",
     "author": "Mark Twain",
     "cover": "https://books.google.com/books/content?id=53CKzQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
@@ -125,6 +155,12 @@ const POPULAR_BOOKS = [
     "author": "Mark Twain",
     "cover": "https://books.google.com/books/content?id=t5yFTpIJYhcC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
     "key": "pop-the-adventures-of-tom-sawyer-mark-twain"
+  },
+  {
+    "title": "Crime and Punishment",
+    "author": "Fyodor Dostoevsky",
+    "cover": null,
+    "key": "pop-crime-and-punishment-fyodor-dostoevsky"
   },
   {
     "title": "The Brothers Karamazov",
@@ -209,6 +245,12 @@ const POPULAR_BOOKS = [
     "author": "Paulo Coelho",
     "cover": "https://books.google.com/books/content?id=FEL8DlqjYEkC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
     "key": "pop-the-alchemist-paulo-coelho"
+  },
+  {
+    "title": "Lord of the Flies",
+    "author": "William Golding",
+    "cover": null,
+    "key": "pop-lord-of-the-flies-william-golding"
   },
   {
     "title": "Catch-22",
@@ -319,6 +361,12 @@ const POPULAR_BOOKS = [
     "key": "pop-harry-potter-and-the-chamber-of-secrets-j-k-rowling"
   },
   {
+    "title": "Harry Potter and the Prisoner of Azkaban",
+    "author": "J.K. Rowling",
+    "cover": null,
+    "key": "pop-harry-potter-and-the-prisoner-of-azkaban-j-k-rowling"
+  },
+  {
     "title": "Harry Potter and the Goblet of Fire",
     "author": "J.K. Rowling",
     "cover": "https://books.google.com/books/content?id=etukl7GfrxQC&printsec=frontcover&img=1&zoom=1&source=gbs_api",
@@ -341,6 +389,12 @@ const POPULAR_BOOKS = [
     "author": "J.K. Rowling",
     "cover": "https://books.google.com/books/content?id=8rMBuwEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
     "key": "pop-harry-potter-and-the-deathly-hallows-j-k-rowling"
+  },
+  {
+    "title": "The Lion, the Witch and the Wardrobe",
+    "author": "C.S. Lewis",
+    "cover": "https://books.google.com/books/content?id=gY6RQgAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-the-lion-the-witch-and-the-wardrobe-c-s-lewis"
   },
   {
     "title": "A Game of Thrones",
@@ -727,6 +781,12 @@ const POPULAR_BOOKS = [
     "key": "pop-catching-fire-suzanne-collins"
   },
   {
+    "title": "Mockingjay",
+    "author": "Suzanne Collins",
+    "cover": null,
+    "key": "pop-mockingjay-suzanne-collins"
+  },
+  {
     "title": "Twilight",
     "author": "Stephenie Meyer",
     "cover": "https://books.google.com/books/content?id=lGjFtMRqp_YC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
@@ -755,6 +815,12 @@ const POPULAR_BOOKS = [
     "author": "Stephen Chbosky",
     "cover": "https://books.google.com/books/content?id=xFNG764pnOgC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
     "key": "pop-the-perks-of-being-a-wallflower-stephen-chbosky"
+  },
+  {
+    "title": "Looking for Alaska",
+    "author": "John Green",
+    "cover": null,
+    "key": "pop-looking-for-alaska-john-green"
   },
   {
     "title": "The Giver",
@@ -965,6 +1031,162 @@ const POPULAR_BOOKS = [
     "author": "Walter Isaacson",
     "cover": "https://books.google.com/books/content?id=8U2oAAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
     "key": "pop-steve-jobs-walter-isaacson"
+  },
+  {
+    "title": "Siddhartha",
+    "author": "Hermann Hesse",
+    "cover": "https://books.google.com/books/content?id=1HbVmUsuGiYC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-siddhartha-hermann-hesse"
+  },
+  {
+    "title": "Steppenwolf",
+    "author": "Hermann Hesse",
+    "cover": "https://books.google.com/books/content?id=HEyhEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-steppenwolf-hermann-hesse"
+  },
+  {
+    "title": "The Stranger",
+    "author": "Albert Camus",
+    "cover": "https://books.google.com/books/content?id=uxfuAAAAMAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-the-stranger-albert-camus"
+  },
+  {
+    "title": "The Trial",
+    "author": "Franz Kafka",
+    "cover": "https://books.google.com/books/content?id=jA_ADwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-trial-franz-kafka"
+  },
+  {
+    "title": "The Metamorphosis",
+    "author": "Franz Kafka",
+    "cover": "https://books.google.com/books/content?id=ZRYfAgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-metamorphosis-franz-kafka"
+  },
+  {
+    "title": "A Clockwork Orange",
+    "author": "Anthony Burgess",
+    "cover": "https://books.google.com/books/content?id=bgpJn-Oq22MC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-a-clockwork-orange-anthony-burgess"
+  },
+  {
+    "title": "The Road",
+    "author": "Cormac McCarthy",
+    "cover": "https://books.google.com/books/content?id=WIKrD-GKehQC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-road-cormac-mccarthy"
+  },
+  {
+    "title": "Blood Meridian",
+    "author": "Cormac McCarthy",
+    "cover": "https://books.google.com/books/content?id=s-QzccStux4C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-blood-meridian-cormac-mccarthy"
+  },
+  {
+    "title": "No Country for Old Men",
+    "author": "Cormac McCarthy",
+    "cover": "https://books.google.com/books/content?id=3Ksa5vqnc8QC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-no-country-for-old-men-cormac-mccarthy"
+  },
+  {
+    "title": "The Secret History",
+    "author": "Donna Tartt",
+    "cover": "https://books.google.com/books/content?id=VO2w8m-ZAeMC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-secret-history-donna-tartt"
+  },
+  {
+    "title": "The Goldfinch",
+    "author": "Donna Tartt",
+    "cover": "https://books.google.com/books/content?id=T2CA83gbtM8C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-goldfinch-donna-tartt"
+  },
+  {
+    "title": "A Little Life",
+    "author": "Hanya Yanagihara",
+    "cover": "https://books.google.com/books/content?id=0IQd0QEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-a-little-life-hanya-yanagihara"
+  },
+  {
+    "title": "The Midnight Library",
+    "author": "Matt Haig",
+    "cover": "https://books.google.com/books/content?id=63fYDwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-the-midnight-library-matt-haig"
+  },
+  {
+    "title": "Klara and the Sun",
+    "author": "Kazuo Ishiguro",
+    "cover": "https://books.google.com/books/content?id=S7jrDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-klara-and-the-sun-kazuo-ishiguro"
+  },
+  {
+    "title": "Circe",
+    "author": "Madeline Miller",
+    "cover": "https://books.google.com/books/content?id=dyikEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-circe-madeline-miller"
+  },
+  {
+    "title": "The Song of Achilles",
+    "author": "Madeline Miller",
+    "cover": "https://books.google.com/books/content?id=JUMIEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-song-of-achilles-madeline-miller"
+  },
+  {
+    "title": "Dune Messiah",
+    "author": "Frank Herbert",
+    "cover": "https://books.google.com/books/content?id=neiwAAAAIAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-dune-messiah-frank-herbert"
+  },
+  {
+    "title": "The Two Towers",
+    "author": "J.R.R. Tolkien",
+    "cover": "https://books.google.com/books/content?id=12e8PJ2T7sQC&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-the-two-towers-j-r-r-tolkien"
+  },
+  {
+    "title": "The Return of the King",
+    "author": "J.R.R. Tolkien",
+    "cover": "https://books.google.com/books/content?id=K-dCAQAAIAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "key": "pop-the-return-of-the-king-j-r-r-tolkien"
+  },
+  {
+    "title": "The Wise Man's Fear",
+    "author": "Patrick Rothfuss",
+    "cover": "https://books.google.com/books/content?id=6FmJEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-wise-man-s-fear-patrick-rothfuss"
+  },
+  {
+    "title": "Words of Radiance",
+    "author": "Brandon Sanderson",
+    "cover": "https://books.google.com/books/content?id=kYjqAQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-words-of-radiance-brandon-sanderson"
+  },
+  {
+    "title": "The Power of Positive Thinking",
+    "author": "Norman Vincent Peale",
+    "cover": null,
+    "key": "pop-the-power-of-positive-thinking-norman-vincent-peale"
+  },
+  {
+    "title": "Can't Hurt Me",
+    "author": "David Goggins",
+    "cover": "https://books.google.com/books/content?id=OSchEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-can-t-hurt-me-david-goggins"
+  },
+  {
+    "title": "Deep Work",
+    "author": "Cal Newport",
+    "cover": "https://books.google.com/books/content?id=lZpFCgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-deep-work-cal-newport"
+  },
+  {
+    "title": "Ikigai",
+    "author": "Héctor García",
+    "cover": "https://books.google.com/books/content?id=4UCnDQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-ikigai-h-ctor-garc-a"
+  },
+  {
+    "title": "The 48 Laws of Power",
+    "author": "Robert Greene",
+    "cover": "https://books.google.com/books/content?id=afCxg5sogvAC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "key": "pop-the-48-laws-of-power-robert-greene"
   }
 ];
 
