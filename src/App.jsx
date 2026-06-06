@@ -1516,7 +1516,7 @@ export default function App() {
               style={{
                 marginTop: collapsed ? (booksExpanded ? 16 : 10) : 20,
                 padding: collapsed ? "10px 18px" : "15px 24px",
-                background: "linear-gradient(135deg, #7c3aed, #4f46e5)",
+                background: "linear-gradient(90deg, #1e1b4b 0%, #4c1d95 50%, #1e3a5f 100%)",
                 color: "white",
                 border: "none",
                 borderRadius: collapsed ? 10 : 14,
@@ -1524,7 +1524,7 @@ export default function App() {
                 cursor: "pointer",
                 width: "100%",
                 fontWeight: 700,
-                boxShadow: "0 4px 14px rgba(124,58,237,0.35)",
+                boxShadow: "0 4px 14px rgba(30,27,75,0.35)",
                 transform: hoveredFindButton ? "scale(1.02)" : "scale(1)",
                 transition: "transform 0.3s ease",
               }}
