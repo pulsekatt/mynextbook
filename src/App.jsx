@@ -29,6 +29,11 @@ const ENRICH_CACHE_MAX_ENTRIES = 500;
 // "the power of") are fully answered from the bundled cache with zero calls.
 const MIN_CACHE_HITS_TO_SKIP_API = 5;
 
+// Sharing — the public site URL and the message used when sharing.
+const SHARE_URL = "https://mynextbook.io";
+const SHARE_TEXT =
+  "I found my next read with My Next Book — a free AI tool that recommends books based on what you've loved. Try it:";
+
 const LOADING_MESSAGES = [
   "📖 Analysing your reading taste...",
   "🔍 Searching the literary universe...",
@@ -109,6 +114,10 @@ export default function App() {
   const [hoveredHome, setHoveredHome] = useState(false);
   const [hoveredClearAll, setHoveredClearAll] = useState(false);
   const [hoveredStop, setHoveredStop] = useState(false);
+  // Sharing UI state: which share button is hovered, and a brief "Copied!"
+  // confirmation after the copy-link button is used.
+  const [hoveredShare, setHoveredShare] = useState(null);
+  const [shareCopied, setShareCopied] = useState(false);
   const [isMobile, setIsMobile] = useState(
     typeof window !== "undefined" ? window.innerWidth <= 600 : false
   );
@@ -667,6 +676,38 @@ export default function App() {
 
   const amazonLink = (title, author) =>
     `https://www.amazon.com/s?k=${encodeURIComponent(title + " " + author)}&tag=${AMAZON_TAG}`;
+
+  // Share link builders. Each opens the platform's native share dialog in a
+  // new tab pre-filled with our message + site URL.
+  const shareLinks = {
+    x: `https://twitter.com/intent/tweet?text=${encodeURIComponent(SHARE_TEXT)}&url=${encodeURIComponent(SHARE_URL)}`,
+    facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(SHARE_URL)}`,
+    whatsapp: `https://wa.me/?text=${encodeURIComponent(SHARE_TEXT + " " + SHARE_URL)}`,
+  };
+
+  // Copy the site URL to the clipboard, with a short "Copied!" confirmation.
+  // Falls back to a hidden textarea + execCommand on older/insecure contexts
+  // where navigator.clipboard isn't available.
+  const copyShareLink = async () => {
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(SHARE_URL);
+      } else {
+        const ta = document.createElement("textarea");
+        ta.value = SHARE_URL;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+      }
+      setShareCopied(true);
+      setTimeout(() => setShareCopied(false), 2000);
+    } catch {
+      // If copy fails entirely, do nothing — the other share buttons still work.
+    }
+  };
 
   const collapsed = recommendations.length > 0;
 
@@ -1731,6 +1772,103 @@ export default function App() {
               </div>
               );
             })}
+
+            {/* Thank-you + share — shown under the recommendation list. Only
+                appears when not mid-dismiss-animation so it doesn't jump. */}
+            <div
+              className="share-card"
+              style={{
+                background: "linear-gradient(135deg, #f5f1ff, #ede9ff)",
+                border: "1px solid #e2d9f3",
+                borderRadius: 18,
+                padding: "26px 22px",
+                marginTop: 8,
+                textAlign: "center",
+              }}
+            >
+              <div style={{ fontSize: 30, marginBottom: 8 }}>📚💜</div>
+              <div style={{ fontWeight: 800, fontSize: 18, color: "#1e1b4b", marginBottom: 6 }}>
+                Thanks for trying My Next Book!
+              </div>
+              <div
+                style={{
+                  color: "#6b5fa0",
+                  fontSize: 14.5,
+                  lineHeight: 1.6,
+                  maxWidth: 420,
+                  margin: "0 auto 18px",
+                }}
+              >
+                If you found a read worth picking up, share it with a friend who
+                always needs their next book.
+              </div>
+              <div
+                className="share-actions"
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  flexWrap: "wrap",
+                  gap: 10,
+                }}
+              >
+                {[
+                  { id: "x", label: "X", icon: "𝕏", href: shareLinks.x, bg: "#000", color: "#fff" },
+                  { id: "facebook", label: "Facebook", icon: "f", href: shareLinks.facebook, bg: "#1877f2", color: "#fff" },
+                  { id: "whatsapp", label: "WhatsApp", icon: "🟢", href: shareLinks.whatsapp, bg: "#25d366", color: "#fff" },
+                ].map((s) => (
+                  <a
+                    key={s.id}
+                    href={s.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    onMouseEnter={tap(setHoveredShare, s.id)}
+                    onMouseLeave={tap(setHoveredShare, null)}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 8,
+                      padding: "10px 18px",
+                      background: s.bg,
+                      color: s.color,
+                      borderRadius: 99,
+                      textDecoration: "none",
+                      fontSize: 14,
+                      fontWeight: 700,
+                      boxShadow: "0 2px 8px rgba(30,27,75,0.15)",
+                      transform: hoveredShare === s.id ? "scale(1.06)" : "scale(1)",
+                      transition: "transform 0.25s ease",
+                    }}
+                  >
+                    <span style={{ fontWeight: 900 }}>{s.icon}</span>
+                    {s.label}
+                  </a>
+                ))}
+                <button
+                  onClick={copyShareLink}
+                  onMouseEnter={tap(setHoveredShare, "copy")}
+                  onMouseLeave={tap(setHoveredShare, null)}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 8,
+                    padding: "10px 18px",
+                    background: shareCopied ? "#16a34a" : "white",
+                    color: shareCopied ? "white" : "#7c3aed",
+                    border: "1.5px solid",
+                    borderColor: shareCopied ? "#16a34a" : "#c4b5fd",
+                    borderRadius: 99,
+                    fontSize: 14,
+                    fontWeight: 700,
+                    cursor: "pointer",
+                    transform: hoveredShare === "copy" && !shareCopied ? "scale(1.06)" : "scale(1)",
+                    transition: "transform 0.25s ease, background 0.2s ease, color 0.2s ease",
+                  }}
+                >
+                  <span>{shareCopied ? "✓" : "🔗"}</span>
+                  {shareCopied ? "Copied!" : "Copy link"}
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>
