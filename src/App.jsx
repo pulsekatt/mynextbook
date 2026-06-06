@@ -9,6 +9,20 @@ const AMAZON_TAG = import.meta.env.VITE_AMAZON_TAG;
 const CACHED_BOOKS_KEY = "popularBookCovers_v2";
 const CACHED_BOOKS_TTL_MS = 24 * 60 * 60 * 1000;
 
+// Search-result cache: live Google Books search responses by normalized query.
+// Same queries get repeated constantly (popular titles especially) — caching
+// these in localStorage with a 7-day TTL saves a huge chunk of the daily quota.
+const SEARCH_CACHE_KEY = "bookSearchCache_v1";
+const SEARCH_CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+const SEARCH_CACHE_MAX_ENTRIES = 200; // keep storage size bounded
+
+// Enrichment cache: per-recommendation {cover, genre, pages, published} keyed
+// by "title|||author". The model recommends the same well-known books over and
+// over, so cache hit rate is high. 30-day TTL — these fields rarely change.
+const ENRICH_CACHE_KEY = "bookEnrichCache_v1";
+const ENRICH_CACHE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+const ENRICH_CACHE_MAX_ENTRIES = 500;
+
 const LOADING_MESSAGES = [
   "📖 Analysing your reading taste...",
   "🔍 Searching the literary universe...",
@@ -16,6 +30,42 @@ const LOADING_MESSAGES = [
   "✨ Discovering hidden gems...",
   "📚 Almost there, hang tight...",
 ];
+
+// ---- localStorage cache helpers (search + enrichment) ----------------------
+
+const normKey = (s) => (s || "").trim().toLowerCase();
+
+function readCache(key, ttlMs) {
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object") return {};
+    // Drop expired entries on read so the cache self-cleans over time.
+    const now = Date.now();
+    const fresh = {};
+    for (const [k, v] of Object.entries(parsed)) {
+      if (v && typeof v === "object" && now - (v.t || 0) < ttlMs) fresh[k] = v;
+    }
+    return fresh;
+  } catch {
+    return {};
+  }
+}
+
+function writeCache(key, obj, maxEntries) {
+  try {
+    // If we're over the cap, drop the oldest entries first.
+    const entries = Object.entries(obj);
+    if (entries.length > maxEntries) {
+      entries.sort((a, b) => (b[1].t || 0) - (a[1].t || 0));
+      obj = Object.fromEntries(entries.slice(0, maxEntries));
+    }
+    localStorage.setItem(key, JSON.stringify(obj));
+  } catch {
+    // ignore quota errors
+  }
+}
 
 export default function App() {
   const [hoveredFindButton, setHoveredFindButton] = useState(false);
@@ -61,91 +111,39 @@ export default function App() {
   const loadingRef = useRef(null);
   const progressRef = useRef(null);
   const progressStartRef = useRef(null);
+  // Search-results cache is kept in a ref so changes don't trigger re-renders.
+  const searchCacheRef = useRef(null);
+  const enrichCacheRef = useRef(null);
 
   useEffect(() => {
-    // POPULAR_BOOKS now ships with cover URLs baked in (see buildPopularBooks.mjs),
-    // so titles AND covers are available instantly on load with no network calls.
-    // The only thing this effect does is lazily backfill covers for the FEW books
-    // (if any) that had no cover at build time — most runs do nothing.
-    const missing = POPULAR_BOOKS.filter((b) => !b.cover);
-    if (missing.length === 0) return; // nothing to do — the common case
+    // POPULAR_BOOKS ships with cover URLs baked in (see buildPopularBooks.mjs),
+    // so titles + covers are available instantly on load with zero network calls.
+    //
+    // We still APPLY previously-cached covers from localStorage (for any book
+    // that was missing a cover at build time but got one filled in on a prior
+    // visit), but we no longer FETCH on mount — if a book has no cover after
+    // this step, it just shows the 📖 placeholder until something else (e.g.
+    // the user adding it as a recommendation) happens to fetch it.
+    try {
+      const raw = localStorage.getItem(CACHED_BOOKS_KEY);
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      if (!parsed?.covers) return;
+      if (Date.now() - (parsed.timestamp || 0) > CACHED_BOOKS_TTL_MS) return;
+      const stored = parsed.covers;
+      if (Object.keys(stored).length === 0) return;
+      setCachedBooks((prev) =>
+        prev.map((b) => (!b.cover && stored[b.key] ? { ...b, cover: stored[b.key] } : b))
+      );
+    } catch {
+      // ignore
+    }
+  }, []);
 
-    const backfill = async () => {
-      // Reuse a localStorage map so we don't re-fetch the same gaps every visit.
-      let stored = {};
-      try {
-        const raw = localStorage.getItem(CACHED_BOOKS_KEY);
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          if (parsed?.covers && Date.now() - (parsed.timestamp || 0) < CACHED_BOOKS_TTL_MS) {
-            stored = parsed.covers;
-          }
-        }
-      } catch {
-        // ignore
-      }
-
-      // Apply anything we already have cached.
-      if (Object.keys(stored).length > 0) {
-        setCachedBooks((prev) =>
-          prev.map((b) => (!b.cover && stored[b.key] ? { ...b, cover: stored[b.key] } : b))
-        );
-      }
-
-      const stillMissing = missing.filter((b) => !stored[b.key]);
-
-      // Fetch covers GENTLY: small batches with a pause between them, and bail
-      // out entirely on the first 429 (rate limit). Hammering a rate-limited API
-      // would also starve the user's live search, which matters far more than
-      // backfilling a few cover thumbnails. The real fix is to bake covers into
-      // popularBooks.js via buildPopularBooks.mjs so this loop does nothing.
-      const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-      const BATCH = 5;
-      let rateLimited = false;
-
-      for (let i = 0; i < stillMissing.length && !rateLimited; i += BATCH) {
-        const slice = stillMissing.slice(i, i + BATCH);
-        await Promise.all(
-          slice.map(async (b) => {
-            if (rateLimited) return;
-            try {
-              const res = await fetch(
-                `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
-                  b.title + " " + b.author
-                )}&maxResults=1&key=${GOOGLE_BOOKS_API_KEY}`
-              );
-              if (res.status === 429) {
-                rateLimited = true; // stop the whole backfill
-                return;
-              }
-              if (!res.ok) return;
-              const data = await res.json();
-              const img = data.items?.[0]?.volumeInfo?.imageLinks;
-              const cover = (img?.smallThumbnail || img?.thumbnail || null)?.replace(/^http:\/\//, "https://");
-              if (cover) {
-                stored[b.key] = cover;
-                setCachedBooks((prev) =>
-                  prev.map((bk) => (bk.key === b.key ? { ...bk, cover } : bk))
-                );
-              }
-            } catch {
-              // skip; placeholder emoji shows
-            }
-          })
-        );
-        await sleep(400); // breathe between batches to stay under the rate limit
-      }
-
-      try {
-        localStorage.setItem(
-          CACHED_BOOKS_KEY,
-          JSON.stringify({ covers: stored, timestamp: Date.now() })
-        );
-      } catch {
-        // ignore
-      }
-    };
-    backfill();
+  // Load the search + enrichment caches once on mount.
+  useEffect(() => {
+    searchCacheRef.current = readCache(SEARCH_CACHE_KEY, SEARCH_CACHE_TTL_MS);
+    enrichCacheRef.current = readCache(ENRICH_CACHE_KEY, ENRICH_CACHE_TTL_MS);
   }, []);
 
   useEffect(() => {
@@ -228,43 +226,59 @@ export default function App() {
     // 2. Fetch live results, then set the dropdown a single time with the merge.
     clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(async () => {
-      // Only flip the spinner on once the real fetch begins (after debounce),
-      // so it doesn't flash on/off with every keystroke while typing fast.
-      setSearching(true);
+      // Check the localStorage search cache first — same query within the TTL
+      // skips the API entirely and renders instantly.
+      const cacheKey = normKey(query);
+      const cacheStore = searchCacheRef.current || {};
+      const cachedEntry = cacheStore[cacheKey];
+      let liveResults = null;
+      if (cachedEntry && Date.now() - cachedEntry.t < SEARCH_CACHE_TTL_MS) {
+        liveResults = cachedEntry.results;
+      }
+
+      // Only flip the spinner on if we actually need to hit the network.
+      if (!liveResults) setSearching(true);
       const controller = new AbortController();
       searchAbortRef.current = controller;
       try {
-        const res = await fetch(
-          `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
-            query
-          )}&maxResults=15&key=${GOOGLE_BOOKS_API_KEY}`,
-          { signal: controller.signal }
-        );
-        const data = await res.json();
-        // Surface API-level errors (bad/blocked key, quota exceeded, etc.) instead
-        // of silently showing an empty dropdown. data.error is Google's error shape.
-        if (!res.ok || data.error) {
-          console.error(
-            "Google Books search error:",
-            res.status,
-            data.error?.message || "(no message)"
+        if (!liveResults) {
+          const res = await fetch(
+            `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
+              query
+            )}&maxResults=15&key=${GOOGLE_BOOKS_API_KEY}`,
+            { signal: controller.signal }
           );
+          const data = await res.json();
+          // Surface API-level errors (bad/blocked key, quota exceeded, etc.) instead
+          // of silently showing an empty dropdown. data.error is Google's error shape.
+          if (!res.ok || data.error) {
+            console.error(
+              "Google Books search error:",
+              res.status,
+              data.error?.message || "(no message)"
+            );
+          }
+          liveResults = (data.items || [])
+            .filter((b) => b && b.volumeInfo && b.volumeInfo.title)
+            .map((b) => ({
+              title: b.volumeInfo.title,
+              author: b.volumeInfo.authors?.[0] || "Unknown",
+              cover: b.volumeInfo.imageLinks?.smallThumbnail || b.volumeInfo.imageLinks?.thumbnail || null,
+              key: b.id,
+            }));
+
+          // Persist the response so the next identical query is free.
+          if (liveResults.length > 0) {
+            cacheStore[cacheKey] = { t: Date.now(), results: liveResults };
+            writeCache(SEARCH_CACHE_KEY, cacheStore, SEARCH_CACHE_MAX_ENTRIES);
+          }
         }
-        const liveResults = (data.items || [])
-          .filter((b) => b && b.volumeInfo && b.volumeInfo.title)
-          .map((b) => ({
-            title: b.volumeInfo.title,
-            author: b.volumeInfo.authors?.[0] || "Unknown",
-            cover: b.volumeInfo.imageLinks?.smallThumbnail || b.volumeInfo.imageLinks?.thumbnail || null,
-            key: b.id,
-          }));
 
         // Merge: prioritize live results with covers, then cached, then live without covers.
         // Dedupe on BOTH the source key AND a normalized title+author signature,
         // so the same book appearing as multiple Google Books editions (or in both
         // the cache and live results) only shows up once.
-        const norm = (s) => (s || "").trim().toLowerCase();
-        const sig = (b) => norm(b.title) + "|||" + norm(b.author);
+        const sig = (b) => normKey(b.title) + "|||" + normKey(b.author);
         const seenKeys = new Set();
         const seenSigs = new Set();
         const merged = [];
@@ -316,11 +330,10 @@ export default function App() {
   const addBook = (book) => {
     // Dedupe by key AND by title+author, since the same book can arrive with
     // different keys (e.g. from the cached list vs a live Google Books result).
-    const norm = (s) => (s || "").trim().toLowerCase();
     const isDup = myBooks.some(
       (b) =>
         b.key === book.key ||
-        (norm(b.title) === norm(book.title) && norm(b.author) === norm(book.author))
+        (normKey(b.title) === normKey(book.title) && normKey(b.author) === normKey(book.author))
     );
     if (!isDup) setMyBooks([...myBooks, book]);
     setQuery("");
@@ -416,8 +429,19 @@ export default function App() {
 
       // Pull factual fields (cover, genre, pages, year) from Google Books
       // — these are real data, unlike anything the model would guess.
+      // We cache enrichment by "title|||author" in localStorage, so repeated
+      // recommendations of the same well-known book skip the API entirely.
+      const enrichStore = enrichCacheRef.current || {};
+      let enrichDirty = false;
+
       const recsWithCovers = await Promise.all(
         recs.map(async (r) => {
+          const eKey = normKey(r.title) + "|||" + normKey(r.author);
+          const cached = enrichStore[eKey];
+          if (cached && Date.now() - cached.t < ENRICH_CACHE_TTL_MS) {
+            return { ...r, ...cached.data };
+          }
+
           try {
             const coverRes = await fetch(
               `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
@@ -456,18 +480,30 @@ export default function App() {
             // Force https so the image loads on an https site (avoid mixed-content block).
             cover = cover ? cover.replace(/^http:\/\//, "https://") : null;
 
-            return {
-              ...r,
+            const enriched = {
               cover,
               genre: info.categories?.[0] || null,
               pages: info.pageCount || null,
               published: info.publishedDate ? String(info.publishedDate).slice(0, 4) : null,
             };
+
+            // Only cache when we got *something* useful — don't poison the
+            // cache with empty results from a hiccup.
+            if (cover || enriched.genre || enriched.pages || enriched.published) {
+              enrichStore[eKey] = { t: Date.now(), data: enriched };
+              enrichDirty = true;
+            }
+
+            return { ...r, ...enriched };
           } catch {
             return { ...r, cover: null };
           }
         })
       );
+
+      if (enrichDirty) {
+        writeCache(ENRICH_CACHE_KEY, enrichStore, ENRICH_CACHE_MAX_ENTRIES);
+      }
 
       const sorted = [...recsWithCovers]
         .filter((r) => !notInterested.some((ni) => ni.title.toLowerCase() === r.title.toLowerCase() && ni.author.toLowerCase() === r.author.toLowerCase()))
