@@ -5,6 +5,12 @@
 // for each from Google Books, and writes a finished popularBooks.js with the
 // cover URLs baked in — so the app never has to fetch covers for these books.
 //
+// INCREMENTAL: on re-runs, it LOADS the existing popularBooks.js and ONLY
+// fetches covers for books that are either new in the RAW list OR still
+// missing a cover. Books that already have a cover are skipped entirely.
+// This way you can re-run safely without burning quota on books you've
+// already covered.
+//
 // Usage:
 //   1. Put your Google Books API key in the env var (optional but avoids rate limits):
 //        export GOOGLE_BOOKS_API_KEY=your_key_here
@@ -12,11 +18,13 @@
 //   3. It overwrites ./popularBooks.js with covers included.
 //   4. Commit the new popularBooks.js and push. Done.
 //
-// Re-run only when you change the RAW list below.
+// Force a full re-fetch (ignore existing covers) by passing --force:
+//   node buildPopularBooks.mjs --force
 
 import { writeFileSync } from "node:fs";
 
-const API_KEY = process.env.GOOGLE_BOOKS_API_KEY || "";
+const API_KEY = process.env.GOOGLE_BOOKS_API_KEY || "AIzaSyCQ_xLMfBVPDQKc1K7ou4RAysFzndBX_3c";
+const FORCE = process.argv.includes("--force");
 
 // Running without a key uses Google's tiny anonymous per-IP quota, which causes
 // near-instant 429s. Bail out loudly so this never happens by accident.
@@ -39,6 +47,25 @@ console.log(
 
 const slug = (s) =>
   s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+
+// ---- Load existing popularBooks.js so we can reuse already-fetched covers ----
+// We import dynamically — if the file doesn't exist yet (first run), we just
+// start with an empty map and fetch everything.
+let existingCovers = new Map();
+if (!FORCE) {
+  try {
+    const mod = await import("./popularBooks.js");
+    const prev = mod.default || [];
+    for (const b of prev) {
+      if (b?.cover && b?.key) existingCovers.set(b.key, b.cover);
+    }
+    console.log(`Loaded ${existingCovers.size} existing covers from popularBooks.js`);
+  } catch {
+    console.log("No existing popularBooks.js found — fetching all from scratch.");
+  }
+} else {
+  console.log("--force passed — re-fetching ALL covers, ignoring existing ones.");
+}
 
 // ---- The curated list. Edit here, then re-run the script. ----
 const RAW = [
@@ -285,16 +312,44 @@ async function fetchCover(title, author, retries = 0) {
 }
 
 async function main() {
-  console.log(`Fetching covers for ${RAW.length} books...`);
+  // First pass: figure out which books need fetching vs. which we can reuse.
+  // We compute the key the same way as the final output so we can look up
+  // existing covers without re-fetching.
+  const plan = RAW.map(([title, author]) => {
+    const key = "pop-" + slug(title + "-" + author);
+    const existing = existingCovers.get(key);
+    return { title, author, key, existing: existing || null };
+  });
+
+  const toFetch = plan.filter((p) => !p.existing);
+  const reused = plan.length - toFetch.length;
+
+  console.log(
+    `\n${plan.length} books total: reusing ${reused} cached cover(s), ` +
+      `fetching ${toFetch.length} from Google Books.\n`
+  );
+
+  if (toFetch.length === 0) {
+    console.log("Nothing to fetch — popularBooks.js is already complete. Skipping write.");
+    return;
+  }
+
   const out = [];
-  let hit = 0;
-  for (let i = 0; i < RAW.length; i++) {
-    const [title, author] = RAW[i];
-    const cover = await fetchCover(title, author);
+  let hit = reused;
+  let fetched = 0;
+  for (const p of plan) {
+    if (p.existing) {
+      out.push({ title: p.title, author: p.author, cover: p.existing, key: p.key });
+      continue;
+    }
+    const cover = await fetchCover(p.title, p.author);
     if (cover) hit++;
-    out.push({ title, author, cover, key: "pop-" + slug(title + "-" + author) });
-    process.stdout.write(`\r  ${i + 1}/${RAW.length} (${hit} covers found)   `);
-    await sleep(250); // be polite to the API / avoid rate limits (increased from 120ms)
+    out.push({ title: p.title, author: p.author, cover, key: p.key });
+    fetched++;
+    process.stdout.write(
+      `\r  fetched ${fetched}/${toFetch.length} (${hit}/${plan.length} total covers)   `
+    );
+    await sleep(250); // be polite to the API / avoid rate limits
   }
   console.log("");
 
@@ -311,8 +366,8 @@ export default POPULAR_BOOKS;
 `;
 
   writeFileSync("./popularBooks.js", fileBody, "utf8");
-  console.log(`Done. ${hit}/${RAW.length} covers found. Wrote popularBooks.js`);
-  if (hit < RAW.length) {
+  console.log(`Done. ${hit}/${plan.length} covers found (${fetched} new fetches). Wrote popularBooks.js`);
+  if (hit < plan.length) {
     console.log("Books with no cover (will show 📖 placeholder):");
     out.filter((b) => !b.cover).forEach((b) => console.log("  -", b.title));
   }

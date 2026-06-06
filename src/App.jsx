@@ -79,6 +79,11 @@ export default function App() {
   const [isMobile, setIsMobile] = useState(
     typeof window !== "undefined" ? window.innerWidth <= 600 : false
   );
+  // Touch-only devices ("hover: none" media query) — used to skip hover state
+  // entirely so :hover effects don't get stuck after a tap, and so the hover
+  // state from one card doesn't "bleed" onto the next when a card is dismissed
+  // and the finger ends up over the card below.
+  const [isTouch, setIsTouch] = useState(false);
   const [query, setQuery] = useState("");
   const [dropdown, setDropdown] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -151,6 +156,33 @@ export default function App() {
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
+
+  // Detect touch-only devices. We re-evaluate on change (devices that have
+  // both touch and a mouse, like a Surface, will flip between modes).
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.matchMedia) return;
+    const mql = window.matchMedia("(hover: none)");
+    setIsTouch(mql.matches);
+    const handler = (e) => setIsTouch(e.matches);
+    mql.addEventListener?.("change", handler);
+    return () => mql.removeEventListener?.("change", handler);
+  }, []);
+
+  // On touch devices: skip every hover-state setter so :hover-style effects
+  // never activate. On desktop these pass straight through to setState.
+  // Usage: onMouseEnter={tap(setHoveredFoo, true)} onMouseLeave={tap(setHoveredFoo, false)}
+  const tap = (fn, val) => () => { if (!isTouch) fn(val); };
+  // Reset every per-card hover state — called after dismissing a card, so the
+  // hover state from the card that just disappeared doesn't visually "stick"
+  // to the card now sitting under the cursor / finger.
+  const clearAllCardHovers = () => {
+    setHoveredBook(null);
+    setHoveredCover(null);
+    setHoveredButton(null);
+    setHoveredInfo(null);
+    setHoveredAlreadyRead(null);
+    setHoveredNotInterested(null);
+  };
 
   useEffect(() => {
     const handleClick = (e) => {
@@ -369,6 +401,9 @@ export default function App() {
   };
 
   const dismissRec = (idx, direction = "right") => {
+    // Reset hover states immediately, so the hover effect from the dismissed
+    // card doesn't bleed onto whichever card slides under the finger/cursor.
+    clearAllCardHovers();
     if (direction === "right") {
       const rec = recommendations[idx];
       setNotInterested((prev) => {
@@ -697,8 +732,11 @@ export default function App() {
             font-size: 12px !important;
           }
 
-          /* 3 (this round). Action buttons: Buy + More-info on row 1,
-             Already-read + Not-interested share row 2 side-by-side. */
+          /* Action buttons row layout on mobile:
+             - Buy + More-info share row 1 side-by-side
+             - Already-read FULL WIDTH on row 2
+             - Not-interested FULL WIDTH on row 3
+             (Stacked vertically so each is easy to tap without misfires.) */
           .rec-actions {
             gap: 8px !important;
           }
@@ -709,7 +747,7 @@ export default function App() {
           }
           .already-read-btn,
           .not-interested-btn {
-            flex: 1 1 0 !important;
+            flex: 1 1 100% !important;
             margin-left: 0 !important;
             justify-content: center !important;
             text-align: center !important;
@@ -717,6 +755,14 @@ export default function App() {
           .already-read-btn {
             display: inline-flex !important;
             align-items: center !important;
+          }
+
+          /* Tighten up the recommendation cards on mobile so they take less
+             vertical space and don't feel oversized on a phone screen. */
+          .rec-card {
+            padding: 14px !important;
+            border-radius: 14px !important;
+            margin-bottom: 12px !important;
           }
 
           /* 2. Smaller, shorter search bar + placeholder on mobile */
@@ -759,8 +805,8 @@ export default function App() {
           }
           .rec-cover,
           .rec-cover-placeholder {
-            width: 120px !important;
-            height: 174px !important;
+            width: 100px !important;
+            height: 145px !important;
           }
           .rec-confidence-wrap {
             text-align: left;
@@ -803,8 +849,8 @@ export default function App() {
           <button
             className="home-button"
             onClick={goHome}
-            onMouseEnter={() => setHoveredHome(true)}
-            onMouseLeave={() => setHoveredHome(false)}
+            onMouseEnter={tap(setHoveredHome, true)}
+            onMouseLeave={tap(setHoveredHome, false)}
             style={{
               position: "absolute",
               top: 20,
@@ -1021,8 +1067,8 @@ export default function App() {
           {searching && (
             <button
               onClick={stopSearch}
-              onMouseEnter={() => setHoveredStop(true)}
-              onMouseLeave={() => setHoveredStop(false)}
+              onMouseEnter={tap(setHoveredStop, true)}
+              onMouseLeave={tap(setHoveredStop, false)}
               style={{
                 position: "absolute",
                 right: 14,
@@ -1093,10 +1139,12 @@ export default function App() {
                     overflow: "hidden",
                   }}
                   onMouseEnter={(e) => {
+                    if (isTouch) return;
                     e.currentTarget.style.background = "#faf8ff";
                     setHoveredDropdown(idx);
                   }}
                   onMouseLeave={(e) => {
+                    if (isTouch) return;
                     e.currentTarget.style.background = idx === selectedIndex ? "#f0e8ff" : "white";
                     setHoveredDropdown(null);
                   }}
@@ -1265,8 +1313,8 @@ export default function App() {
                     if (loading) stopRecommend();
                     else clearAll();
                   }}
-                  onMouseEnter={() => setHoveredClearAll(true)}
-                  onMouseLeave={() => setHoveredClearAll(false)}
+                  onMouseEnter={tap(setHoveredClearAll, true)}
+                  onMouseLeave={tap(setHoveredClearAll, false)}
                   style={{
                     display: "inline-flex",
                     alignItems: "center",
@@ -1383,8 +1431,8 @@ export default function App() {
             ) : (
               <button
                 onClick={getRecommendations}
-                onMouseEnter={() => setHoveredFindButton(true)}
-                onMouseLeave={() => setHoveredFindButton(false)}
+                onMouseEnter={tap(setHoveredFindButton, true)}
+                onMouseLeave={tap(setHoveredFindButton, false)}
                 style={{
                   marginTop: collapsed ? (booksExpanded ? 16 : 10) : 20,
                   padding: collapsed ? "10px 18px" : "15px 24px",
@@ -1436,9 +1484,9 @@ export default function App() {
               return (
               <div
                 key={r.title + r.author}
-                className={dismissing?.idx === i ? (dismissing.dir === "left" ? "rec-dismissing-left" : "rec-dismissing") : ""}
-                onMouseEnter={() => setHoveredBook(i)}
-                onMouseLeave={() => setHoveredBook(null)}
+                className={"rec-card " + (dismissing?.idx === i ? (dismissing.dir === "left" ? "rec-dismissing-left" : "rec-dismissing") : "")}
+                onMouseEnter={tap(setHoveredBook, i)}
+                onMouseLeave={tap(setHoveredBook, null)}
                 onClick={() => hasMoreInfo && setExpandedRec(expandedRec === i ? null : i)}
                 style={{
                   background: "white",
@@ -1463,8 +1511,8 @@ export default function App() {
                       className="rec-cover"
                       src={r.cover}
                       alt={r.title}
-                      onMouseEnter={() => setHoveredCover(i)}
-                      onMouseLeave={() => setHoveredCover(null)}
+                      onMouseEnter={tap(setHoveredCover, i)}
+                      onMouseLeave={tap(setHoveredCover, null)}
                       style={{
                         width: 86,
                         height: 125,
@@ -1512,8 +1560,8 @@ export default function App() {
                     target="_blank"
                     rel="noreferrer"
                     onClick={(e) => e.stopPropagation()}
-                    onMouseEnter={() => setHoveredButton(i)}
-                    onMouseLeave={() => setHoveredButton(null)}
+                    onMouseEnter={tap(setHoveredButton, i)}
+                    onMouseLeave={tap(setHoveredButton, null)}
                     style={{
                       display: "inline-block",
                       padding: "9px 20px",
@@ -1538,8 +1586,8 @@ export default function App() {
                         e.stopPropagation();
                         setExpandedRec(expandedRec === i ? null : i);
                       }}
-                      onMouseEnter={() => setHoveredInfo(i)}
-                      onMouseLeave={() => setHoveredInfo(null)}
+                      onMouseEnter={tap(setHoveredInfo, i)}
+                      onMouseLeave={tap(setHoveredInfo, null)}
                       style={{
                         padding: "9px 18px",
                         background: expandedRec === i ? "#7c3aed" : "white",
@@ -1562,8 +1610,8 @@ export default function App() {
                       e.stopPropagation();
                       markAsRead(i);
                     }}
-                    onMouseEnter={() => setHoveredAlreadyRead(i)}
-                    onMouseLeave={() => setHoveredAlreadyRead(null)}
+                    onMouseEnter={tap(setHoveredAlreadyRead, i)}
+                    onMouseLeave={tap(setHoveredAlreadyRead, null)}
                     style={{
                       padding: "9px 18px",
                       background: hoveredAlreadyRead === i ? "#f0fdf4" : "white",
@@ -1587,8 +1635,8 @@ export default function App() {
                       e.stopPropagation();
                       dismissRec(i);
                     }}
-                    onMouseEnter={() => setHoveredNotInterested(i)}
-                    onMouseLeave={() => setHoveredNotInterested(null)}
+                    onMouseEnter={tap(setHoveredNotInterested, i)}
+                    onMouseLeave={tap(setHoveredNotInterested, null)}
                     style={{
                       padding: "9px 18px",
                       background: hoveredNotInterested === i ? "#fef2f2" : "white",
