@@ -830,11 +830,15 @@ export default function App() {
           .home-button {
             top: 12px !important;
             right: 12px !important;
-            padding: 8px !important;
-            width: 38px !important;
-            height: 38px !important;
+            padding: 6px !important;
+            width: 30px !important;
+            height: 30px !important;
+            font-size: 11px !important;
             justify-content: center !important;
             gap: 0 !important;
+          }
+          .home-button span {
+            font-size: 13px !important;
           }
           .home-label {
             display: none !important;
@@ -982,7 +986,7 @@ export default function App() {
               animation: "homeFadeIn 0.5s ease-out both",
             }}
           >
-            <span style={{ fontSize: 12 }}>🏠</span>
+            <span style={{ fontSize: 14 }}>🏠</span>
             <span className="home-label">Home</span>
           </button>
         )}
