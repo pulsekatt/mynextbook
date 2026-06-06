@@ -1854,20 +1854,37 @@ export default function App() {
             <div
               className="share-card"
               style={{
-                background: "linear-gradient(135deg, #f5f1ff, #ede9ff)",
-                border: "1px solid #e2d9f3",
+                background: "linear-gradient(135deg, #1e1b4b 0%, #1e3a5f 100%)",
+                border: "1px solid rgba(167,139,250,0.25)",
                 borderRadius: 18,
-                padding: "26px 22px",
+                padding: "32px 22px",
                 textAlign: "center",
+                position: "relative",
+                overflow: "hidden",
+                boxShadow: "0 8px 30px rgba(30,27,75,0.18)",
               }}
             >
+              {/* Soft purple glow to match the header's depth */}
+              <div
+                style={{
+                  position: "absolute",
+                  top: "-40%",
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  width: 360,
+                  height: 360,
+                  background: "radial-gradient(circle, rgba(124,58,237,0.35), transparent 70%)",
+                  pointerEvents: "none",
+                }}
+              />
+              <div style={{ position: "relative", zIndex: 1 }}>
               <div style={{ fontSize: 30, marginBottom: 8 }}>📚💜</div>
-              <div style={{ fontWeight: 800, fontSize: 18, color: "#1e1b4b", marginBottom: 6 }}>
+              <div style={{ fontWeight: 800, fontSize: 19, color: "#ffffff", marginBottom: 6 }}>
                 Thanks for trying My Next Book!
               </div>
               <div
                 style={{
-                  color: "#6b5fa0",
+                  color: "#c4b5fd",
                   fontSize: 14.5,
                   lineHeight: 1.6,
                   maxWidth: 420,
@@ -1927,14 +1944,15 @@ export default function App() {
                     alignItems: "center",
                     gap: 8,
                     padding: "10px 18px",
-                    background: shareCopied ? "#16a34a" : "white",
-                    color: shareCopied ? "white" : "#7c3aed",
+                    background: shareCopied ? "#16a34a" : "rgba(167,139,250,0.15)",
+                    color: shareCopied ? "white" : "#c4b5fd",
                     border: "1.5px solid",
-                    borderColor: shareCopied ? "#16a34a" : "#c4b5fd",
+                    borderColor: shareCopied ? "#16a34a" : "rgba(167,139,250,0.5)",
                     borderRadius: 99,
                     fontSize: 14,
                     fontWeight: 700,
                     cursor: "pointer",
+                    backdropFilter: "blur(4px)",
                     transform: hoveredShare === "copy" && !shareCopied ? "scale(1.06)" : "scale(1)",
                     transition: "transform 0.25s ease, background 0.2s ease, color 0.2s ease",
                   }}
@@ -1942,6 +1960,7 @@ export default function App() {
                   <span>{shareCopied ? "✓" : "🔗"}</span>
                   {shareCopied ? "Copied!" : "Copy link"}
                 </button>
+              </div>
               </div>
             </div>
           </div>
