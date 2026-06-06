@@ -810,6 +810,17 @@ export default function App() {
           from { opacity: 0; transform: translateY(-6px); }
           to { opacity: 1; transform: translateY(0); }
         }
+        @keyframes loadingBob {
+          0%, 100% { transform: translateY(0) rotate(-3deg); }
+          50% { transform: translateY(-12px) rotate(3deg); }
+        }
+        .loading-book {
+          display: inline-block;
+          animation: loadingBob 2s ease-in-out infinite;
+        }
+        .loading-view {
+          animation: fadeDown 0.4s ease-out both;
+        }
 
         /* ---- Mobile tweaks (phones) ---- */
         @media (max-width: 600px) {
@@ -1365,8 +1376,9 @@ export default function App() {
           </div>
         )}
 
-        {/* Books list */}
-        {myBooks.length > 0 && (
+        {/* Books list — hidden entirely while loading so only the clean
+            loading view (below) shows. */}
+        {myBooks.length > 0 && !loading && (
           <div
             className="books-card"
             style={{
@@ -1491,56 +1503,101 @@ export default function App() {
               </div>
             ))}
 
-            {loading ? (
-              <div style={{ marginTop: 24, textAlign: "center", padding: "20px 0" }}>
-                <div style={{ fontSize: 32, marginBottom: 12 }}>📚</div>
-                <div style={{ color: "#6b5fa0", fontSize: 15, fontWeight: 500, minHeight: 24 }}>
-                  {LOADING_MESSAGES[loadingMsg]}
-                </div>
-                <div
-                  style={{
-                    marginTop: 16,
-                    background: "#f0ebff",
-                    borderRadius: 99,
-                    height: 6,
-                    overflow: "hidden",
-                  }}
-                >
-                  <div
-                    style={{
-                      height: "100%",
-                      width: `${progress}%`,
-                      background: "linear-gradient(90deg, #7c3aed, #4f46e5)",
-                      borderRadius: 99,
-                      transition: "width 0.2s linear",
-                    }}
-                  />
-                </div>
-              </div>
-            ) : (
-              <button
-                onClick={getRecommendations}
-                onMouseEnter={tap(setHoveredFindButton, true)}
-                onMouseLeave={tap(setHoveredFindButton, false)}
+            <button
+              onClick={getRecommendations}
+              onMouseEnter={tap(setHoveredFindButton, true)}
+              onMouseLeave={tap(setHoveredFindButton, false)}
+              style={{
+                marginTop: collapsed ? (booksExpanded ? 16 : 10) : 20,
+                padding: collapsed ? "10px 18px" : "15px 24px",
+                background: "linear-gradient(135deg, #7c3aed, #4f46e5)",
+                color: "white",
+                border: "none",
+                borderRadius: collapsed ? 10 : 14,
+                fontSize: collapsed ? 14 : 15,
+                cursor: "pointer",
+                width: "100%",
+                fontWeight: 700,
+                boxShadow: "0 4px 14px rgba(124,58,237,0.35)",
+                transform: hoveredFindButton ? "scale(1.02)" : "scale(1)",
+                transition: "transform 0.3s ease",
+              }}
+            >
+              {myBooks.length > 1 ? "🔍 Find more books!" : "🔍 Find my next book!"}
+            </button>
+          </div>
+        )}
+
+        {/* Clean loading view — replaces the whole books card while we wait
+            on recommendations. Just the floating book, the rotating status
+            message, a filling progress bar, and a Stop button. */}
+        {myBooks.length > 0 && loading && (
+          <div
+            className="loading-view"
+            style={{
+              width: "min(960px, 92vw)",
+              marginLeft: "calc(50% - min(480px, 46vw))",
+              marginTop: collapsed ? 10 : 0,
+              marginBottom: collapsed ? 0 : 22,
+              textAlign: "center",
+              padding: "44px 20px",
+              boxSizing: "border-box",
+            }}
+          >
+            <div className="loading-book" style={{ fontSize: 52, marginBottom: 18 }}>📚</div>
+            <div
+              style={{
+                color: "#4c3f7a",
+                fontSize: 18,
+                fontWeight: 600,
+                minHeight: 28,
+                marginBottom: 22,
+              }}
+            >
+              {LOADING_MESSAGES[loadingMsg]}
+            </div>
+            <div
+              style={{
+                maxWidth: 420,
+                margin: "0 auto 24px",
+                background: "#e4dbfa",
+                borderRadius: 99,
+                height: 8,
+                overflow: "hidden",
+              }}
+            >
+              <div
                 style={{
-                  marginTop: collapsed ? (booksExpanded ? 16 : 10) : 20,
-                  padding: collapsed ? "10px 18px" : "15px 24px",
-                  background: "linear-gradient(135deg, #7c3aed, #4f46e5)",
-                  color: "white",
-                  border: "none",
-                  borderRadius: collapsed ? 10 : 14,
-                  fontSize: collapsed ? 14 : 15,
-                  cursor: "pointer",
-                  width: "100%",
-                  fontWeight: 700,
-                  boxShadow: "0 4px 14px rgba(124,58,237,0.35)",
-                  transform: hoveredFindButton ? "scale(1.02)" : "scale(1)",
-                  transition: "transform 0.3s ease",
+                  height: "100%",
+                  width: `${progress}%`,
+                  background: "linear-gradient(90deg, #7c3aed, #4f46e5)",
+                  borderRadius: 99,
+                  transition: "width 0.2s linear",
                 }}
-              >
-                {myBooks.length > 1 ? "🔍 Find more books!" : "🔍 Find my next book!"}
-              </button>
-            )}
+              />
+            </div>
+            <button
+              onClick={stopRecommend}
+              onMouseEnter={tap(setHoveredStop, true)}
+              onMouseLeave={tap(setHoveredStop, false)}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 7,
+                background: hoveredStop ? "#fef2f2" : "transparent",
+                color: hoveredStop ? "#dc2626" : "#a78bfa",
+                border: "1px solid",
+                borderColor: hoveredStop ? "#fca5a5" : "#d8ccf2",
+                borderRadius: 99,
+                padding: "8px 18px",
+                fontSize: 13.5,
+                fontWeight: 600,
+                cursor: "pointer",
+                transition: "all 0.2s ease",
+              }}
+            >
+              ⏹ Stop
+            </button>
           </div>
         )}
         </div>
