@@ -850,6 +850,11 @@ export default function App() {
 
         /* ---- Mobile tweaks (phones) ---- */
         @media (max-width: 600px) {
+          /* The wave gets visually taller on a narrow screen (the curve is
+             stretched), so shrink its height so it doesn't dominate. */
+          .header-wave {
+            height: 36px !important;
+          }
           /* Home button on mobile: collapse to a compact round icon-only
              button tucked in the corner, so it never overlaps the trust
              pills. The "Home" text label is hidden; just the 🏠 shows. */
@@ -1182,6 +1187,7 @@ export default function App() {
         {/* Wave edge — beige curve at the bottom of the header that blends it
             into the page below, replacing the old hard gradient band. */}
         <svg
+          className="header-wave"
           viewBox="0 0 1440 90"
           preserveAspectRatio="none"
           style={{
