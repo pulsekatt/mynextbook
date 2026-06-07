@@ -152,7 +152,7 @@ export default function App() {
   const [hoveredBook, setHoveredBook] = useState(null);
   const [hoveredCover, setHoveredCover] = useState(null);
   const [hoveredDropdown, setHoveredDropdown] = useState(null);
-  const [booksExpanded, setBooksExpanded] = useState(false);
+  const [booksExpanded, setBooksExpanded] = useState(true);
   const [expandedRec, setExpandedRec] = useState(null);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [cachedBooks, setCachedBooks] = useState(POPULAR_BOOKS);
@@ -463,7 +463,7 @@ export default function App() {
 
   const clearAll = () => {
     setMyBooks([]);
-    setBooksExpanded(false);
+    setBooksExpanded(true);
   };
 
   // Reset back to the "home" state: clears recommendations and scrolls up,
@@ -472,7 +472,7 @@ export default function App() {
     setRecommendations([]);
     setExpandedRec(null);
     setError("");
-    setBooksExpanded(false);
+    setBooksExpanded(true);
     setDismissing(null);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -676,6 +676,7 @@ export default function App() {
   // A small fact pill for the "More info" panel.
   const InfoPill = ({ icon, label }) => (
     <span
+      className="info-pill"
       style={{
         display: "inline-flex",
         alignItems: "center",
@@ -898,6 +899,27 @@ export default function App() {
           }
           .info-panel-desktop {
             display: none !important;
+          }
+          /* Shrink the genre/pages/year pills on mobile so all three fit on a
+             single line without wrapping. */
+          .info-pill {
+            padding: 5px 10px !important;
+            font-size: 11px !important;
+            gap: 5px !important;
+          }
+          .info-panel-mobile > div > div {
+            flex-wrap: nowrap !important;
+          }
+          /* Keep the loading view at its original (smaller) size on mobile —
+             the larger sizing only applies on PC. */
+          .loading-book {
+            font-size: 52px !important;
+            margin-bottom: 18px !important;
+          }
+          .loading-message {
+            font-size: 18px !important;
+            min-height: 28px !important;
+            margin-bottom: 22px !important;
           }
           .already-read-btn,
           .not-interested-btn {
@@ -1646,14 +1668,15 @@ export default function App() {
               boxSizing: "border-box",
             }}
           >
-            <div className="loading-book" style={{ fontSize: 52, marginBottom: 18 }}>📚</div>
+            <div className="loading-book" style={{ fontSize: 104, marginBottom: 24 }}>📚</div>
             <div
+              className="loading-message"
               style={{
                 color: "#4c3f7a",
-                fontSize: 18,
-                fontWeight: 600,
-                minHeight: 28,
-                marginBottom: 22,
+                fontSize: 36,
+                fontWeight: 700,
+                minHeight: 52,
+                marginBottom: 30,
               }}
             >
               {LOADING_MESSAGES[loadingMsg]}
