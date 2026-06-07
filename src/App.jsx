@@ -494,7 +494,7 @@ export default function App() {
       setDismissing(null);
       if (expandedRec === idx) setExpandedRec(null);
       else if (expandedRec !== null && expandedRec > idx) setExpandedRec(expandedRec - 1);
-    }, 650);
+    }, 1000);
   };
 
   const markAsRead = (idx) => {
@@ -795,20 +795,20 @@ export default function App() {
         }
         @keyframes dismissSlide {
           0% { opacity: 1; transform: translateX(0); max-height: 300px; margin-bottom: 16px; }
-          55% { opacity: 0; transform: translateX(80px); max-height: 300px; margin-bottom: 16px; }
-          100% { opacity: 0; transform: translateX(80px); max-height: 0; margin-bottom: 0; padding: 0; }
+          60% { opacity: 0; transform: translateX(90px); max-height: 300px; margin-bottom: 16px; }
+          100% { opacity: 0; transform: translateX(90px); max-height: 0; margin-bottom: 0; padding: 0; }
         }
         @keyframes dismissSlideLeft {
           0% { opacity: 1; transform: translateX(0); max-height: 300px; margin-bottom: 16px; }
-          55% { opacity: 0; transform: translateX(-80px); max-height: 300px; margin-bottom: 16px; }
-          100% { opacity: 0; transform: translateX(-80px); max-height: 0; margin-bottom: 0; padding: 0; }
+          60% { opacity: 0; transform: translateX(-90px); max-height: 300px; margin-bottom: 16px; }
+          100% { opacity: 0; transform: translateX(-90px); max-height: 0; margin-bottom: 0; padding: 0; }
         }
         .rec-dismissing {
-          animation: dismissSlide 0.65s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+          animation: dismissSlide 1s cubic-bezier(0.33, 0, 0.2, 1) forwards;
           overflow: hidden;
         }
         .rec-dismissing-left {
-          animation: dismissSlideLeft 0.65s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+          animation: dismissSlideLeft 1s cubic-bezier(0.33, 0, 0.2, 1) forwards;
           overflow: hidden;
         }
         @keyframes dropdownReveal {
@@ -866,16 +866,22 @@ export default function App() {
 
           /* Action buttons row layout on mobile:
              - Buy + More-info share row 1 side-by-side
-             - Already-read FULL WIDTH on row 2
-             - Not-interested FULL WIDTH on row 3
+             - More info FULL WIDTH on top (order: -1)
+             - Buy on Amazon FULL WIDTH below it
+             - Already-read FULL WIDTH
+             - Not-interested FULL WIDTH
              (Stacked vertically so each is easy to tap without misfires.) */
           .rec-actions {
             gap: 8px !important;
           }
           .buy-btn,
           .info-btn {
-            flex: 1 1 auto !important;
+            flex: 1 1 100% !important;
             text-align: center !important;
+          }
+          /* More info sits ABOVE the Amazon buy button on mobile. */
+          .info-btn {
+            order: -1 !important;
           }
           .already-read-btn,
           .not-interested-btn {
@@ -970,10 +976,11 @@ export default function App() {
       <div
         style={{
           background: "linear-gradient(180deg, #1e1b4b 0%, #1e3a5f 90%, #f0ede8 100%)",
-          padding: "44px 20px 64px",
+          padding: loading ? "32px 20px 36px" : "44px 20px 64px",
           textAlign: "center",
           position: "relative",
           overflow: "hidden",
+          transition: "padding 0.5s ease",
         }}
       >
         {/* Home button — only shown once recommendations exist. */}
@@ -1043,7 +1050,15 @@ export default function App() {
           </div>
         ))}
 
-        <div style={{ position: "relative", zIndex: 1 }}>
+        <div
+          style={{
+            position: "relative",
+            zIndex: 1,
+            transform: loading ? "scale(0.82)" : "scale(1)",
+            transformOrigin: "center top",
+            transition: "transform 0.5s ease",
+          }}
+        >
           <div
             className="fade-down"
             style={{
@@ -1098,7 +1113,9 @@ export default function App() {
               height: 3,
               background: "linear-gradient(90deg, #7c3aed, #a78bfa)",
               borderRadius: 99,
-              margin: "18px auto 20px",
+              margin: loading ? "0 auto" : "18px auto 20px",
+              opacity: loading ? 0 : 1,
+              transition: "opacity 0.4s ease, margin 0.5s ease",
             }}
           />
           <p
@@ -1108,6 +1125,10 @@ export default function App() {
               maxWidth: 520,
               margin: "0 auto",
               lineHeight: 1.7,
+              opacity: loading ? 0 : 1,
+              maxHeight: loading ? 0 : 120,
+              overflow: "hidden",
+              transition: "opacity 0.4s ease, max-height 0.5s ease",
             }}
           >
             {tagline[0]}<br />
@@ -1411,6 +1432,33 @@ export default function App() {
                 </div>
               ))}
             </div>
+
+            {/* Mobile-only: a button under the how-it-works cards that scrolls
+                back up to the search field, since on a phone the search bar is
+                pushed out of view once you've scrolled down to read the cards. */}
+            {isMobile && (
+              <button
+                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                style={{
+                  marginTop: 28,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 8,
+                  background: "white",
+                  color: "#7c3aed",
+                  border: "1.5px solid #c4b5fd",
+                  borderRadius: 99,
+                  padding: "11px 22px",
+                  fontSize: 14,
+                  fontWeight: 700,
+                  cursor: "pointer",
+                  boxShadow: "0 2px 10px rgba(124,58,237,0.12)",
+                }}
+              >
+                <span style={{ fontSize: 15 }}>↑</span>
+                Back to search
+              </button>
+            )}
           </div>
         )}
 
