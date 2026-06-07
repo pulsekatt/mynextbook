@@ -841,6 +841,11 @@ export default function App() {
         .loading-view {
           animation: fadeDown 0.4s ease-out both;
         }
+        /* The mobile info panel is hidden by default (desktop); the mobile
+           media query below flips it on and hides the desktop panel instead. */
+        .info-panel-mobile {
+          display: none;
+        }
 
         /* ---- Mobile tweaks (phones) ---- */
         @media (max-width: 600px) {
@@ -882,6 +887,17 @@ export default function App() {
           /* More info sits ABOVE the Amazon buy button on mobile. */
           .info-btn {
             order: -1 !important;
+          }
+          /* On mobile, the info panel slides in at the very top of the button
+             column (above More info), not at the bottom of the card. Swap which
+             panel is visible. */
+          .info-panel-mobile {
+            display: grid !important;
+            order: -2 !important;
+            flex: 1 1 100% !important;
+          }
+          .info-panel-desktop {
+            display: none !important;
           }
           .already-read-btn,
           .not-interested-btn {
@@ -1713,6 +1729,15 @@ export default function App() {
             </h3>
             {recommendations.map((r, i) => {
               const hasMoreInfo = r.genre || r.pages || r.published;
+              // Shared pill set, used by both the desktop panel (bottom of card)
+              // and the mobile panel (above the buttons).
+              const infoPills = (
+                <>
+                  {r.genre && <InfoPill icon="📚" label={r.genre} />}
+                  {r.pages && <InfoPill icon="📄" label={`${r.pages} pages`} />}
+                  {r.published && <InfoPill icon="📅" label={r.published} />}
+                </>
+              );
               return (
               <div
                 key={r.title + r.author}
@@ -1885,9 +1910,41 @@ export default function App() {
                   >
                     ✕ Not interested
                   </button>
+
+                  {/* Mobile-only info panel — slides in ABOVE the buttons
+                      (order: -2 puts it at the very top of the stacked column).
+                      Hidden on desktop via CSS; the desktop panel below the
+                      button row is used there instead. */}
+                  {hasMoreInfo && (
+                    <div
+                      className="info-panel-mobile"
+                      style={{
+                        gridTemplateRows: expandedRec === i ? "1fr" : "0fr",
+                        opacity: expandedRec === i ? 1 : 0,
+                        transition: "grid-template-rows 0.45s ease, opacity 0.35s ease",
+                      }}
+                    >
+                      <div style={{ overflow: "hidden", minHeight: 0 }}>
+                        <div
+                          style={{
+                            paddingBottom: 14,
+                            marginBottom: 2,
+                            borderBottom: "1px dashed #e2d9f3",
+                            display: "flex",
+                            flexWrap: "wrap",
+                            gap: 8,
+                            justifyContent: "center",
+                          }}
+                        >
+                          {infoPills}
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div
+                  className="info-panel-desktop"
                   style={{
                     display: "grid",
                     gridTemplateRows: expandedRec === i ? "1fr" : "0fr",
@@ -1906,9 +1963,7 @@ export default function App() {
                         gap: 8,
                       }}
                     >
-                      {r.genre && <InfoPill icon="📚" label={r.genre} />}
-                      {r.pages && <InfoPill icon="📄" label={`${r.pages} pages`} />}
-                      {r.published && <InfoPill icon="📅" label={r.published} />}
+                      {infoPills}
                     </div>
                   </div>
                 </div>
