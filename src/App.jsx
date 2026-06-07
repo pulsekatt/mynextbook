@@ -921,6 +921,11 @@ export default function App() {
             min-height: 28px !important;
             margin-bottom: 22px !important;
           }
+          .loading-bar {
+            max-width: 420px !important;
+            height: 8px !important;
+            margin-bottom: 24px !important;
+          }
           .already-read-btn,
           .not-interested-btn {
             flex: 1 1 100% !important;
@@ -1013,8 +1018,8 @@ export default function App() {
       {/* Header */}
       <div
         style={{
-          background: "linear-gradient(180deg, #1e1b4b 0%, #1e3a5f 90%, #f0ede8 100%)",
-          padding: loading ? "32px 20px 36px" : "44px 20px 64px",
+          background: "linear-gradient(180deg, #1e1b4b 0%, #1e3a5f 100%)",
+          padding: loading ? "32px 20px 56px" : "44px 20px 84px",
           textAlign: "center",
           position: "relative",
           overflow: "hidden",
@@ -1173,6 +1178,28 @@ export default function App() {
             {tagline[1]}
           </p>
         </div>
+
+        {/* Wave edge — beige curve at the bottom of the header that blends it
+            into the page below, replacing the old hard gradient band. */}
+        <svg
+          viewBox="0 0 1440 90"
+          preserveAspectRatio="none"
+          style={{
+            position: "absolute",
+            bottom: -1,
+            left: 0,
+            width: "100%",
+            height: 70,
+            display: "block",
+            zIndex: 3,
+            pointerEvents: "none",
+          }}
+        >
+          <path
+            d="M0,48 C240,90 480,90 720,58 C960,26 1200,26 1440,52 L1440,90 L0,90 Z"
+            fill="#f0ede8"
+          />
+        </svg>
       </div>
 
       <div style={{ maxWidth: 860, margin: "0 auto", padding: "36px 20px", display: "flex", flexDirection: "column" }}>
@@ -1569,8 +1596,15 @@ export default function App() {
                 )}
               </div>
             </div>
-            {(!collapsed || booksExpanded) &&
-              myBooks.map((b) => (
+            <div
+              style={{
+                display: "grid",
+                gridTemplateRows: (!collapsed || booksExpanded) ? "1fr" : "0fr",
+                transition: "grid-template-rows 0.4s ease",
+              }}
+            >
+              <div style={{ overflow: "hidden", minHeight: 0 }}>
+                {myBooks.map((b) => (
               <div
                 key={b.key}
                 className="book-row"
@@ -1625,7 +1659,9 @@ export default function App() {
                   ✕
                 </button>
               </div>
-            ))}
+                ))}
+              </div>
+            </div>
 
             <button
               onClick={getRecommendations}
@@ -1682,12 +1718,13 @@ export default function App() {
               {LOADING_MESSAGES[loadingMsg]}
             </div>
             <div
+              className="loading-bar"
               style={{
-                maxWidth: 420,
-                margin: "0 auto 24px",
+                maxWidth: 560,
+                margin: "0 auto 28px",
                 background: "#e4dbfa",
                 borderRadius: 99,
-                height: 8,
+                height: 14,
                 overflow: "hidden",
               }}
             >
