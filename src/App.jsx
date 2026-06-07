@@ -157,6 +157,9 @@ export default function App() {
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [cachedBooks, setCachedBooks] = useState(POPULAR_BOOKS);
   const [dismissing, setDismissing] = useState(null);
+  // Key of the book most recently added (via "Already read" or search), so we
+  // can play a one-time slide-in animation on just that row.
+  const [justAddedKey, setJustAddedKey] = useState(null);
   const [myBooks, setMyBooks] = useState(() => {
     const saved = localStorage.getItem("myBooks");
     return saved ? JSON.parse(saved) : [];
@@ -444,7 +447,10 @@ export default function App() {
         b.key === book.key ||
         (normKey(b.title) === normKey(book.title) && normKey(b.author) === normKey(book.author))
     );
-    if (!isDup) setMyBooks([...myBooks, book]);
+    if (!isDup) {
+      setMyBooks([...myBooks, book]);
+      setJustAddedKey(book.key);
+    }
     setQuery("");
     setDropdown([]);
     setDropdownOpen(false);
@@ -507,6 +513,7 @@ export default function App() {
     };
     if (!myBooks.find((b) => b.key === book.key)) {
       setMyBooks((prev) => [...prev, book]);
+      setJustAddedKey(book.key);
     }
     dismissRec(idx, "left");
   };
@@ -794,6 +801,13 @@ export default function App() {
           background: #faf8ff;
           transform: translateX(4px);
         }
+        @keyframes bookRowIn {
+          0% { opacity: 0; transform: translateY(-10px); background: #f0e8ff; }
+          100% { opacity: 1; transform: translateY(0); background: transparent; }
+        }
+        .book-row-new {
+          animation: bookRowIn 0.5s ease-out;
+        }
         @keyframes dismissSlide {
           0% { opacity: 1; transform: translateX(0); max-height: 300px; margin-bottom: 16px; }
           60% { opacity: 0; transform: translateX(90px); max-height: 300px; margin-bottom: 16px; }
@@ -854,6 +868,11 @@ export default function App() {
              stretched), so shrink its height so it doesn't dominate. */
           .header-wave {
             height: 36px !important;
+          }
+          /* Less bottom padding on mobile so there isn't excess space between
+             the tagline and the (now shorter) wave. */
+          .app-header {
+            padding-bottom: 48px !important;
           }
           /* Home button on mobile: collapse to a compact round icon-only
              button tucked in the corner, so it never overlaps the trust
@@ -1022,6 +1041,7 @@ export default function App() {
 
       {/* Header */}
       <div
+        className="app-header"
         style={{
           background: "linear-gradient(180deg, #1e1b4b 0%, #1e3a5f 100%)",
           padding: loading ? "32px 20px 56px" : "44px 20px 84px",
@@ -1613,7 +1633,7 @@ export default function App() {
                 {myBooks.map((b) => (
               <div
                 key={b.key}
-                className="book-row"
+                className={"book-row" + (b.key === justAddedKey ? " book-row-new" : "")}
                 style={{
                   display: "flex",
                   alignItems: "center",
