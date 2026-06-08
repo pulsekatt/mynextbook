@@ -160,6 +160,10 @@ export default function App() {
   // Key of the book most recently added (via "Already read" or search), so we
   // can play a one-time slide-in animation on just that row.
   const [justAddedKey, setJustAddedKey] = useState(null);
+  // True once a recommendation set has been shown this session. Stays true even
+  // after the user dismisses every card, so the share widget (and the collapsed
+  // layout) persist instead of vanishing when the last card is removed.
+  const [hasRecommended, setHasRecommended] = useState(false);
   const [myBooks, setMyBooks] = useState(() => {
     const saved = localStorage.getItem("myBooks");
     return saved ? JSON.parse(saved) : [];
@@ -476,6 +480,7 @@ export default function App() {
   // but keeps the user's books so they can tweak and search again.
   const goHome = () => {
     setRecommendations([]);
+    setHasRecommended(false);
     setExpandedRec(null);
     setError("");
     setBooksExpanded(true);
@@ -628,6 +633,7 @@ export default function App() {
         .filter((r) => !notInterested.some((ni) => ni.title.toLowerCase() === r.title.toLowerCase() && ni.author.toLowerCase() === r.author.toLowerCase()))
         .sort((a, b) => (b.confidence || 0) - (a.confidence || 0));
       setRecommendations(sorted);
+      if (sorted.length > 0) setHasRecommended(true);
     } catch (err) {
       // AbortError = user pressed Stop; don't show an error in that case.
       if (err.name !== "AbortError") {
@@ -737,7 +743,11 @@ export default function App() {
     }
   };
 
-  const collapsed = recommendations.length > 0;
+  const collapsed = hasRecommended;
+  // The header shrinks while loading AND stays shrunk once recommendations are
+  // shown — it only expands back when the user hits Home (which clears
+  // hasRecommended). So: shrunk whenever loading or collapsed.
+  const headerShrunk = loading || collapsed;
 
   return (
     <div className="app-root" style={{ minHeight: "100vh", background: "#f0ede8", fontFamily: "'Segoe UI', sans-serif" }}>
@@ -872,7 +882,17 @@ export default function App() {
           /* Less bottom padding on mobile so there isn't excess space between
              the tagline and the (now shorter) wave. */
           .app-header {
-            padding-bottom: 48px !important;
+            padding-top: 30px !important;
+            padding-bottom: 44px !important;
+          }
+          /* Slightly smaller title + tagline so the header doesn't eat the
+             whole first screen on a phone. */
+          .app-title {
+            font-size: 40px !important;
+            letter-spacing: -1.2px !important;
+          }
+          .app-tagline {
+            font-size: 15px !important;
           }
           /* Home button on mobile: collapse to a compact round icon-only
              button tucked in the corner, so it never overlaps the trust
@@ -1044,7 +1064,7 @@ export default function App() {
         className="app-header"
         style={{
           background: "linear-gradient(180deg, #1e1b4b 0%, #1e3a5f 100%)",
-          padding: loading ? "32px 20px 56px" : "44px 20px 84px",
+          padding: headerShrunk ? "32px 20px 56px" : "44px 20px 84px",
           textAlign: "center",
           position: "relative",
           overflow: "hidden",
@@ -1122,7 +1142,7 @@ export default function App() {
           style={{
             position: "relative",
             zIndex: 1,
-            transform: loading ? "scale(0.82)" : "scale(1)",
+            transform: headerShrunk ? "scale(0.82)" : "scale(1)",
             transformOrigin: "center top",
             transition: "transform 0.5s ease",
           }}
@@ -1164,6 +1184,7 @@ export default function App() {
             ))}
           </div>
           <h1
+            className="app-title"
             style={{
               color: "white",
               fontSize: 56,
@@ -1181,20 +1202,21 @@ export default function App() {
               height: 3,
               background: "linear-gradient(90deg, #7c3aed, #a78bfa)",
               borderRadius: 99,
-              margin: loading ? "0 auto" : "18px auto 20px",
-              opacity: loading ? 0 : 1,
+              margin: headerShrunk ? "0 auto" : "18px auto 20px",
+              opacity: headerShrunk ? 0 : 1,
               transition: "opacity 0.4s ease, margin 0.5s ease",
             }}
           />
           <p
+            className="app-tagline"
             style={{
               color: "#c4b5fd",
               fontSize: 18,
               maxWidth: 520,
               margin: "0 auto",
               lineHeight: 1.7,
-              opacity: loading ? 0 : 1,
-              maxHeight: loading ? 0 : 120,
+              opacity: headerShrunk ? 0 : 1,
+              maxHeight: headerShrunk ? 0 : 120,
               overflow: "hidden",
               transition: "opacity 0.4s ease, max-height 0.5s ease",
             }}
@@ -1730,15 +1752,15 @@ export default function App() {
               boxSizing: "border-box",
             }}
           >
-            <div className="loading-book" style={{ fontSize: 104, marginBottom: 24 }}>📚</div>
+            <div className="loading-book" style={{ fontSize: 130, marginBottom: 28 }}>📚</div>
             <div
               className="loading-message"
               style={{
                 color: "#4c3f7a",
-                fontSize: 36,
+                fontSize: 42,
                 fontWeight: 700,
-                minHeight: 52,
-                marginBottom: 30,
+                minHeight: 60,
+                marginBottom: 34,
               }}
             >
               {LOADING_MESSAGES[loadingMsg]}
@@ -2062,7 +2084,7 @@ export default function App() {
         {/* Thank-you + share — placed at the VERY BOTTOM (order: 4), below the
             sticky controls region / "Find more books" button (order: 3). Only
             rendered once recommendations exist. */}
-        {recommendations.length > 0 && (
+        {hasRecommended && (
           <div
             className="share-card-wrap"
             style={{
