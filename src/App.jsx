@@ -1303,6 +1303,32 @@ export default function App() {
         </svg>
       </div>
 
+      {/* SEO description — visually hidden but present in the HTML so search
+          engines have a clean, intentional sentence to use as the result
+          snippet, instead of stitching together the step-card text (which
+          produced an awkward ". 1. Add your books ;. 2. ..." snippet). Kept
+          readable by screen readers; not display:none so crawlers don't skip
+          it as hidden spam. */}
+      <p
+        style={{
+          position: "absolute",
+          width: 1,
+          height: 1,
+          padding: 0,
+          margin: -1,
+          overflow: "hidden",
+          clip: "rect(0,0,0,0)",
+          whiteSpace: "nowrap",
+          border: 0,
+        }}
+      >
+        My Next Book is a free AI-powered book recommendation tool. Tell us a
+        few books you've loved, and it finds patterns in your taste to suggest
+        five personalized reads you'll enjoy next — each with a cover, genre,
+        and a short reason why it matches you. No signup, no ads, completely
+        free.
+      </p>
+
       <div style={{ maxWidth: 860, margin: "0 auto", padding: "36px 20px", display: "flex", flexDirection: "column" }}>
         {/* Controls region (sticky + compact once recommendations exist) */}
         <div
@@ -1572,7 +1598,7 @@ export default function App() {
                       border: "1px solid #e8e0f7",
                     }}
                   >
-                    <div style={{ fontSize: 55, marginBottom: 10 }}>{s.icon}</div>
+                    <div style={{ fontSize: 55, marginBottom: 10 }} aria-hidden="true">{s.icon}</div>
                     <div
                       style={{
                         background: "linear-gradient(135deg, #7c3aed, #4f46e5)",
