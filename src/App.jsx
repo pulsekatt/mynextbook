@@ -4,6 +4,21 @@ import POPULAR_BOOKS from "./popularBooks";
 const GOOGLE_BOOKS_API_KEY = import.meta.env.VITE_GOOGLE_BOOKS_API_KEY;
 const AMAZON_TAG = import.meta.env.VITE_AMAZON_TAG;
 
+// Fast lookup of popular books by normalized "title|||author". Used in
+// getRecommendations to skip the Google Books enrichment API call when a
+// recommendation matches a book we've already baked metadata for at build
+// time (description, genre, pages, published year, cover). This saves an
+// API round-trip AND guarantees we show the More info content even when a
+// live Google Books fetch would otherwise come back empty.
+const POPULAR_BY_TITLEAUTHOR = new Map();
+for (const b of POPULAR_BOOKS) {
+  const k =
+    (b.title || "").trim().toLowerCase() +
+    "|||" +
+    (b.author || "").trim().toLowerCase();
+  POPULAR_BY_TITLEAUTHOR.set(k, b);
+}
+
 // Bestseller cache: persisted in localStorage with a 24h TTL so repeat visits
 // hit instant-search from second 0 without re-fetching anything.
 const CACHED_BOOKS_KEY = "popularBookCovers_v2";
@@ -16,10 +31,13 @@ const SEARCH_CACHE_KEY = "bookSearchCache_v1";
 const SEARCH_CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 const SEARCH_CACHE_MAX_ENTRIES = 200; // keep storage size bounded
 
-// Enrichment cache: per-recommendation {cover, genre, pages, published} keyed
-// by "title|||author". The model recommends the same well-known books over and
-// over, so cache hit rate is high. 30-day TTL — these fields rarely change.
-const ENRICH_CACHE_KEY = "bookEnrichCache_v1";
+// Enrichment cache: per-recommendation {cover, genre, pages, published, description}
+// keyed by "title|||author". The model recommends the same well-known books over
+// and over, so cache hit rate is high. 30-day TTL — these fields rarely change.
+// Bumped to _v2 when we added `description` to the enrichment payload; entries
+// from older versions are simply ignored (key changed) and fall through to a
+// fresh fetch.
+const ENRICH_CACHE_KEY = "bookEnrichCache_v2";
 const ENRICH_CACHE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 const ENRICH_CACHE_MAX_ENTRIES = 500;
 
@@ -566,6 +584,27 @@ export default function App() {
       const recsWithCovers = await Promise.all(
         recs.map(async (r) => {
           const eKey = normKey(r.title) + "|||" + normKey(r.author);
+
+          // First: is this one of our baked-in popular books? If yes, use the
+          // pre-fetched metadata directly — no API call needed, and we know
+          // the description (if Google Books had one at build time) will be
+          // present. This is both faster AND more reliable than the live
+          // fetch path below, since live fetches sometimes hit editions that
+          // have no description even when other editions of the same book do.
+          const popular = POPULAR_BY_TITLEAUTHOR.get(eKey);
+          if (popular && popular.description !== undefined) {
+            return {
+              ...r,
+              cover: popular.cover,
+              description: popular.description,
+              genre: popular.genre,
+              pages: popular.pages,
+              published: popular.published,
+            };
+          }
+
+          // Second: localStorage enrichment cache from prior live Google Books
+          // fetches (covers books that aren't in our popular list).
           const cached = enrichStore[eKey];
           if (cached && Date.now() - cached.t < ENRICH_CACHE_TTL_MS) {
             return { ...r, ...cached.data };
