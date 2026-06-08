@@ -164,6 +164,9 @@ export default function App() {
   // after the user dismisses every card, so the share widget (and the collapsed
   // layout) persist instead of vanishing when the last card is removed.
   const [hasRecommended, setHasRecommended] = useState(false);
+  // Index of the recommendation whose description is expanded to full length
+  // (null = none / all truncated).
+  const [descExpanded, setDescExpanded] = useState(null);
   const [myBooks, setMyBooks] = useState(() => {
     const saved = localStorage.getItem("myBooks");
     return saved ? JSON.parse(saved) : [];
@@ -482,6 +485,7 @@ export default function App() {
     setRecommendations([]);
     setHasRecommended(false);
     setExpandedRec(null);
+    setDescExpanded(null);
     setError("");
     setBooksExpanded(true);
     setDismissing(null);
@@ -503,6 +507,7 @@ export default function App() {
     setTimeout(() => {
       setRecommendations((prev) => prev.filter((_, i) => i !== idx));
       setDismissing(null);
+      setDescExpanded(null);
       if (expandedRec === idx) setExpandedRec(null);
       else if (expandedRec !== null && expandedRec > idx) setExpandedRec(expandedRec - 1);
     }, 1000);
@@ -604,16 +609,25 @@ export default function App() {
             // Force https so the image loads on an https site (avoid mixed-content block).
             cover = cover ? cover.replace(/^http:\/\//, "https://") : null;
 
+            // Google Books descriptions sometimes contain HTML (<p>, <br>,
+            // <i>…). Strip tags to plain text and collapse whitespace so it
+            // renders cleanly in the panel.
+            const rawDesc = info.description || "";
+            const description = rawDesc
+              ? rawDesc.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim()
+              : null;
+
             const enriched = {
               cover,
               genre: info.categories?.[0] || null,
               pages: info.pageCount || null,
               published: info.publishedDate ? String(info.publishedDate).slice(0, 4) : null,
+              description,
             };
 
             // Only cache when we got *something* useful — don't poison the
             // cache with empty results from a hiccup.
-            if (cover || enriched.genre || enriched.pages || enriched.published) {
+            if (cover || enriched.genre || enriched.pages || enriched.published || enriched.description) {
               enrichStore[eKey] = { t: Date.now(), data: enriched };
               enrichDirty = true;
             }
@@ -1836,7 +1850,7 @@ export default function App() {
               ✨ Your next reads
             </h3>
             {recommendations.map((r, i) => {
-              const hasMoreInfo = r.genre || r.pages || r.published;
+              const hasMoreInfo = r.genre || r.pages || r.published || r.description;
               // Shared pill set, used by both the desktop panel (bottom of card)
               // and the mobile panel (above the buttons).
               const infoPills = (
@@ -1844,6 +1858,58 @@ export default function App() {
                   {r.genre && <InfoPill icon="📚" label={r.genre} />}
                   {r.pages && <InfoPill icon="📄" label={`${r.pages} pages`} />}
                   {r.published && <InfoPill icon="📅" label={r.published} />}
+                </>
+              );
+              // Real publisher blurb from Google Books, truncated with a
+              // "Read more" toggle. Shown above the pills in both panels.
+              const DESC_LIMIT = 240;
+              const fullDesc = r.description || "";
+              const descIsLong = fullDesc.length > DESC_LIMIT;
+              const descShown =
+                descExpanded === i || !descIsLong
+                  ? fullDesc
+                  : fullDesc.slice(0, DESC_LIMIT).trim() + "…";
+              // Full "more info" body (description + pills), reused by both the
+              // desktop and mobile panels.
+              const moreInfoBody = (
+                <>
+                  {fullDesc && (
+                    <p
+                      style={{
+                        color: "#5a5170",
+                        fontSize: 14,
+                        lineHeight: 1.65,
+                        margin: "0 0 12px",
+                        textAlign: "left",
+                      }}
+                    >
+                      {descShown}
+                      {descIsLong && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setDescExpanded(descExpanded === i ? null : i);
+                          }}
+                          style={{
+                            marginLeft: 6,
+                            background: "none",
+                            border: "none",
+                            padding: 0,
+                            color: "#7c3aed",
+                            fontSize: 14,
+                            fontWeight: 700,
+                            cursor: "pointer",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          {descExpanded === i ? "Read less" : "Read more"}
+                        </button>
+                      )}
+                    </p>
+                  )}
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                    {infoPills}
+                  </div>
                 </>
               );
               return (
@@ -2038,13 +2104,9 @@ export default function App() {
                             paddingBottom: 14,
                             marginBottom: 2,
                             borderBottom: "1px dashed #e2d9f3",
-                            display: "flex",
-                            flexWrap: "wrap",
-                            gap: 8,
-                            justifyContent: "center",
                           }}
                         >
-                          {infoPills}
+                          {moreInfoBody}
                         </div>
                       </div>
                     </div>
@@ -2066,12 +2128,9 @@ export default function App() {
                         marginTop: 16,
                         paddingTop: 16,
                         borderTop: "1px dashed #e2d9f3",
-                        display: "flex",
-                        flexWrap: "wrap",
-                        gap: 8,
                       }}
                     >
-                      {infoPills}
+                      {moreInfoBody}
                     </div>
                   </div>
                 </div>
