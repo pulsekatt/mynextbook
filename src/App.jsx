@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import POPULAR_BOOKS from "./popularBooks";
+import { Analytics } from '@vercel/analytics/react';
 
 const GOOGLE_BOOKS_API_KEY = import.meta.env.VITE_GOOGLE_BOOKS_API_KEY;
 const AMAZON_TAG = import.meta.env.VITE_AMAZON_TAG;
@@ -2333,6 +2334,7 @@ export default function App() {
           </div>
         )}
       </div>
+            <Analytics />
     </div>
   );
 }
